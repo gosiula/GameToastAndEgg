@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public class Monster extends Enemy {
     private BufferedImage[] sprites;
-    private Thread monsterLogicThread;
+    private Thread monsterLogicThread1;
     private Thread monsterGraphicsThread;
     private Thread monsterMainThread;
     private volatile boolean running = true;
