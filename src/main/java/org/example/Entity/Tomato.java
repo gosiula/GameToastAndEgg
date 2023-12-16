@@ -8,9 +8,11 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
 
-public class Tomato extends MapObject {
+public class Tomato extends MapObject implements Runnable{
 
     private BufferedImage image;
+    private final boolean running = true;
+
 
     public Tomato(TileMap tm) {
         super(tm);
@@ -28,7 +30,19 @@ public class Tomato extends MapObject {
     }
 
     public void update() {
-        // Money doesn't need to be updated actively
+    }
+
+    @Override
+    public void run() {
+        while (running && !Thread.interrupted()) {
+            update(); // Aktualizacja logiki gracza
+
+            try {
+                Thread.sleep(10); // Dodatkowy delay dla wątku gracza
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // Przerwanie wątku po przechwyceniu InterruptedException
+            }
+        }
     }
 
     public void draw(Graphics2D g) {

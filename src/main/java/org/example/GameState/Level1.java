@@ -75,6 +75,7 @@ public class Level1 extends GameState {
 
         // initialization of the player
         player = new Player(tileMap);
+
         // position of the player
         player.setPosition(100, 100);
 
@@ -247,19 +248,23 @@ public class Level1 extends GameState {
             enemies = new ArrayList<>();
             avocadoList = new ArrayList<>();
             tomatoList = new ArrayList<>();
+            GamePanel.stopThreads();
             gsm.setState(GameStateManager.GAME_OVER_STATE); // Przejdź do stanu GameOver
             MapObject.xMap = 0;
             MapObject.yMap = 0;
             player.isAlive(false);
+            GamePanel.startThreads();
         }
         else if(player.getx() > 3000 && !player.isDead() && isQKeyPressed()) {
             player.setPosition(100, 100);
             enemies = new ArrayList<>();
             avocadoList = new ArrayList<>();
             tomatoList = new ArrayList<>();
+            GamePanel.stopThreads();
             gsm.setState(GameStateManager.CONGRATULATIONS_STATE);
             MapObject.xMap = 0;
             MapObject.yMap = 0;
+            GamePanel.startThreads();
         }
     }
 
@@ -267,8 +272,10 @@ public class Level1 extends GameState {
         return qKeyPressed; // Zakłada, że masz zmienną qKeyPressed przechowującą informację o tym, czy klawisz Q został naciśnięty
     }
 
+
     // drawing level 1
     public void draw(Graphics2D g) {
+
         // drawing on the back buffer
         Graphics2D backBufferGraphics = (Graphics2D) backBuffer.getGraphics();
         backBufferGraphics.setColor(Color.BLACK);

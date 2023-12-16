@@ -7,10 +7,11 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 // DISPLAYING THE HUD OF THE PLAYER - HEADS-UP DISPLAY
-public class HUD {
+public class HUD implements Runnable{
     private final Player player;
     private BufferedImage image;
     private Font font;
+    private volatile boolean running = true;
 
     public HUD(Player p) {
         player = p;
@@ -26,35 +27,19 @@ public class HUD {
         }
     }
 
-    private void updateInBackground() {
-        // Add any background logic here, if needed
-    }
-
-    private void updateOnEDT() {
-        // Update the UI on the Event Dispatch Thread
-        player.getHealth(); // Example: Accessing a player's health
-        player.getMaxHealth(); // Example: Accessing a player's max health
-        player.getFire(); // Example: Accessing a player's fire
-        player.getMaxFire(); // Example: Accessing a player's max fire
-        // You can use these values to update the HUD accordingly
+    @Override
+    public void run() {
+        while (running && !Thread.interrupted()) {
+            try {
+                HUD hud = new HUD(player);
+                Thread.sleep(10); // Dodatkowy delay dla wątku gracza
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // Przerwanie wątku po przechwyceniu InterruptedException
+            }
+        }
     }
 
     public void draw(Graphics2D g) {
-        SwingWorker<Void, Void> worker = new SwingWorker<>() {
-            @Override
-            protected Void doInBackground() {
-                updateInBackground();
-                return null;
-            }
-
-            @Override
-            protected void done() {
-                updateOnEDT();
-            }
-        };
-
-        worker.execute();
-
         // Drawing code for the HUD
         g.drawImage(image, 0, 20, null);
         g.setColor(new Color(255, 255, 255));

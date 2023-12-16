@@ -1,13 +1,15 @@
 package org.example.Main;
-
-import org.example.GameState.GameOver;
+import org.example.Entity.*;
 import org.example.GameState.GameStateManager;
+import org.example.TileMap.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.sql.SQLOutput;
+
 
 // CREATING A PANEL, STARTING THE GAME, IMAGES AND GSM
 public class GamePanel extends JPanel implements Runnable, KeyListener {
@@ -20,8 +22,21 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     // scale of the panel
     public static final int SCALE = 2;
 
+
+    // Thread usage
+    private static Player player;
+    private static TileMap tileMap;
+    private static Monster monster;
+    private static Tomato tomato;
+    private static Avocado avocado;
+
+    private static Explosion explosion;
+    private static FireBall fireball;
+    private static HUD hud;
+    private static Egg egg;
+
     // game thread
-    private Thread thread;
+    private Thread mainThread;
 
     // the running of the thread
     private boolean threadIsRunning;
@@ -32,6 +47,16 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     // game state manager
     private GameStateManager gsm;
+    private static Thread playerThread;
+    public static Thread tileMapThread;
+    public static Thread monsterThread;
+    public static Thread tomatoThread;
+    public static Thread avocadoThread;
+    public static Thread fireballThread;
+    public static Thread HUDThread;
+    public static Thread explosionThread;
+    public static Thread eggThread;
+
 
     // GamePanel constructor
     public GamePanel() {
@@ -50,10 +75,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         super.addNotify();
 
         // initialization and starting the game thread if it wasn't made yet,
-        if (thread == null) {
-            thread = new Thread(this);
+        if (mainThread == null) {
+            mainThread = new Thread(this);
             addKeyListener(this);
-            thread.start();
+            mainThread.start();
         }
     }
 
@@ -68,7 +93,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
         // creating a GameStateManager
         gsm = new GameStateManager();
+
+        startThreads();
     }
+
 
     // running of the game
     public void run() {
@@ -110,6 +138,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         }
     }
 
+
     // updating the game
     private void update() {
         gsm.update();
@@ -130,6 +159,106 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
         // disposing the resources of the Graphics
         g2.dispose();
+    }
+
+    public static void startThreads() {
+        startPlayerThread(player);
+        startTileMapThread(tileMap);
+        startMonstersThread(monster);
+        startTomatoThread(tomato);
+        startAvocadoThread(avocado);
+        startFireBallThread(fireball);
+        startHUDThread(hud);
+        startExplosionThread(explosion);
+        startEggThread(egg);
+    }
+
+    public static void stopThreads() {
+        tileMapThread.stop();
+        playerThread.stop();
+        monsterThread.stop();
+        tomatoThread.stop();
+        avocadoThread.stop();
+        fireballThread.stop();
+        HUDThread.stop();
+        explosionThread.stop();
+        eggThread.stop();
+        System.out.println("Threads stoped");
+    }
+
+    public static void startTileMapThread(TileMap tileMap) {
+        System.out.println("TileMap thread started");
+        tileMapThread = new Thread(tileMap);
+        tileMapThread.start();
+    }
+
+    // Metoda startująca wątek gracza
+    public static void startPlayerThread(Player player) {
+        System.out.println("Player thread started");
+        playerThread = new Thread(player);
+        playerThread.start();
+    }
+
+    public static void startMonstersThread(Monster monster) {
+        System.out.println("Monster thread started");
+        monsterThread = new Thread(monster);
+        monsterThread.start();
+    }
+
+    public static void startTomatoThread(Tomato tomato) {
+        System.out.println("Tomato thread started");
+        tomatoThread = new Thread(tomato);
+        tomatoThread.start();
+    }
+
+    public static void startAvocadoThread(Avocado avocado) {
+        System.out.println("Avocado thread started");
+        avocadoThread = new Thread(avocado);
+        avocadoThread.start();
+    }
+
+    public static void startFireBallThread(FireBall fireball) {
+        System.out.println("Fireball thread started");
+        fireballThread = new Thread(avocado);
+        fireballThread.start();
+    }
+
+    public static void startHUDThread(HUD hud) {
+        System.out.println("HUD thread started");
+        HUDThread = new Thread(hud);
+        HUDThread.start();
+    }
+
+    public static void startExplosionThread(Explosion explosion) {
+        System.out.println("Explosion thread started");
+        explosionThread = new Thread(explosion);
+        explosionThread.start();
+    }
+
+    public static void startEggThread(Egg egg) {
+        System.out.println("Explosion thread started");
+        eggThread = new Thread(egg);
+        eggThread.start();
+    }
+
+    // Metoda zatrzymująca wątek gracza
+    public static void stopPlayerThread() {
+        if (playerThread != null && playerThread.isAlive()) {
+            playerThread.interrupt(); // Przerwanie wątku gracza
+            try {
+                playerThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g.create();
+        // You can perform additional drawing operations here if needed
+        g2d.dispose();
     }
 
     public void keyTyped(KeyEvent key) {

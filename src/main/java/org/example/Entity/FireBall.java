@@ -7,13 +7,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
-public class FireBall extends MapObject {
+public class FireBall extends MapObject implements Runnable{
     private boolean hit;
     private boolean remove;
     private BufferedImage[] hitSprites;
-    private Thread fireBallLogicThread;
-    private Thread fireBallGraphicsThread;
-    private Thread fireBallMainThread;
     private volatile boolean running = true;
 
     public FireBall(TileMap tm, boolean right) {
@@ -65,6 +62,19 @@ public class FireBall extends MapObject {
         }
     }
 
+    @Override
+    public void run() {
+        while (running && !Thread.interrupted()) {
+            update(); // Aktualizacja logiki gracza
+
+            try {
+                Thread.sleep(10); // Dodatkowy delay dla wątku gracza
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // Przerwanie wątku po przechwyceniu InterruptedException
+            }
+        }
+    }
+
     public void setHit() {
         if (hit) return;
         hit = true;
@@ -94,60 +104,5 @@ public class FireBall extends MapObject {
     public void draw(Graphics2D g) {
         setMapPosition();
         super.draw(g);
-    }
-
-    public void start() {
-        fireBallLogicThread = new Thread(this::fireBallLogic);
-        fireBallGraphicsThread = new Thread(this::fireBallGraphics);
-        fireBallMainThread = new Thread(this::fireBallMain);
-
-        fireBallLogicThread.start();
-        fireBallGraphicsThread.start();
-        fireBallMainThread.start();
-    }
-
-    public void stop() {
-        running = false;
-        try {
-            fireBallLogicThread.join();
-            fireBallGraphicsThread.join();
-            fireBallMainThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void fireBallLogic() {
-        while (running) {
-            update();
-            try {
-                Thread.sleep(16);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void fireBallGraphics() {
-        while (running) {
-            // Aktualizacja grafiki fireballa
-            // (możesz dodać swoją logikę renderowania)
-            try {
-                Thread.sleep(16);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void fireBallMain() {
-        while (running) {
-            // Dodatkowa logika dla wątka głównego fireballa
-            try {
-                Thread.sleep(16);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }

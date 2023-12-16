@@ -37,29 +37,7 @@ public class Enemy extends MapObject {
         flinchTimer = System.nanoTime();
     }
 
-    private void updateInBackground() {
-        // Update the enemy's logic in the background
-        // This could include things like movement, AI, etc.
-    }
-
-    private void updateOnEDT() {
-        // Perform any UI-related updates on the Event Dispatch Thread
-    }
-
     public void update() {
-        SwingWorker<Void, Void> worker = new SwingWorker<>() {
-            @Override
-            protected Void doInBackground() {
-                updateInBackground();
-                return null;
-            }
 
-            @Override
-            protected void done() {
-                updateOnEDT();
-            }
-        };
-
-        worker.execute();
     }
 }

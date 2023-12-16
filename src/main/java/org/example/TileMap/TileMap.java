@@ -9,7 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Objects;
 
-public class TileMap {
+public class TileMap implements Runnable{
     private double x;
     private double y;
     private int xMin;
@@ -34,6 +34,21 @@ public class TileMap {
     private Thread tileMapMainThread;
     private volatile boolean running = true;
 
+    @Override
+    public void run() {
+        // Logika wątku TileMap
+        while (running) {
+            tileMapLogic();
+            tileMapGraphics();
+            tileMapMain();
+            try {
+                Thread.sleep(16);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public TileMap(int tileSize) {
         this.tileSize = tileSize;
         numRowsToDraw = GamePanel.HEIGHT / tileSize + 2;
@@ -53,12 +68,15 @@ public class TileMap {
         tileMapMainThread.start();
     }
 
+    // Metoda zatrzymująca wątek TileMap
     public void stopThreads() {
         running = false;
         try {
             tileMapLogicThread.join();
             tileMapGraphicsThread.join();
             tileMapMainThread.join();
+            GamePanel.tileMapThread.interrupt(); // Przerwanie wątku TileMap
+            GamePanel.tileMapThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

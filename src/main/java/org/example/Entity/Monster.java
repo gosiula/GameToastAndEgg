@@ -9,10 +9,20 @@ import java.util.Objects;
 
 public class Monster extends Enemy implements Runnable {
     private BufferedImage[] sprites;
+    private final boolean running = true;
+
 
     @Override
     public void run() {
+        while (running && !Thread.interrupted()) {
+            update(); // Aktualizacja logiki gracza
 
+            try {
+                Thread.sleep(10); // Dodatkowy delay dla wątku gracza
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // Przerwanie wątku po przechwyceniu InterruptedException
+            }
+        }
     }
 
     public Monster(TileMap tm) {
@@ -99,7 +109,6 @@ public class Monster extends Enemy implements Runnable {
             left = false;
             facingRight = true;
         }
-
         animation.update();
     }
 

@@ -61,7 +61,7 @@ public abstract class MapObject {
     // MapObject constructor
     public MapObject(TileMap tm) {
         tileMap = tm;
-        tileSize = tm.getTileSize();
+        tileSize = 30;
     }
 
     // checking the intersection

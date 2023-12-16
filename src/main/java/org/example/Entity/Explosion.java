@@ -1,11 +1,11 @@
 package org.example.Entity;
-
+import org.example.Main.*;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
-public class Explosion {
+public class Explosion implements Runnable{
     private final int x;
     private final int y;
     private int xMap;
@@ -15,15 +15,14 @@ public class Explosion {
     private final Animation animation;
     private BufferedImage[] sprites;
     private boolean remove;
+    private GamePanel gamePanel;
 
-    private final Thread explosionLogicThread;
-    private Thread explosionGraphicsThread;
-    private Thread explosionMainThread;
     private volatile boolean running = true;
 
     public Explosion(int x, int y) {
         this.x = x;
         this.y = y;
+        this.gamePanel = gamePanel;
         width = 30;
         height = 30;
 
@@ -50,18 +49,19 @@ public class Explosion {
         animation = new Animation();
         animation.setFrames(sprites);
         animation.setDelay(70);
+    }
 
-        // Separate thread for logic
-        explosionLogicThread = new Thread(this::explosionLogic);
-        explosionLogicThread.start();
+    @Override
+    public void run() {
+        while (running && !Thread.interrupted()) {
+            update(); // Aktualizacja logiki gracza
 
-        // Separate thread for graphics
-        explosionGraphicsThread = new Thread(this::explosionGraphics);
-        explosionGraphicsThread.start();
-
-        // Separate main thread (for any additional main logic)
-        explosionMainThread = new Thread(this::explosionMain);
-        explosionMainThread.start();
+            try {
+                Thread.sleep(10); // Dodatkowy delay dla wątku gracza
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // Przerwanie wątku po przechwyceniu InterruptedException
+            }
+        }
     }
 
     public void update() {
@@ -87,51 +87,5 @@ public class Explosion {
                 y + yMap - height / 2,
                 null
         );
-    }
-
-    public void stop() {
-        running = false;
-        try {
-            explosionLogicThread.join();
-            explosionGraphicsThread.join();
-            explosionMainThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void explosionLogic() {
-        while (running) {
-            update();
-            // Dodatkowa logika dla wątka logiki explosion
-            try {
-                Thread.sleep(16);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void explosionGraphics() {
-        while (running) {
-            // Aktualizacja grafiki explosion
-            // (możesz dodać swoją logikę renderowania)
-            try {
-                Thread.sleep(16);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void explosionMain() {
-        while (running) {
-            // Dodatkowa logika dla wątka głównego explosion
-            try {
-                Thread.sleep(16);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }

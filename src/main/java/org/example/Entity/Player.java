@@ -9,7 +9,7 @@ import java.util.Objects;
 
 // CREATING A PLAYER AND DEFINING THE WORKING OF MOVEMENT, ATTACKS, ANIMATION
 // AND THE INTERACTION WITH OTHER OBJECTS
-public class Player extends MapObject {
+public class Player extends MapObject implements Runnable{
 
     // player parameters
     private int health;
@@ -47,19 +47,18 @@ public class Player extends MapObject {
     private static final int SCRATCHING = 6;
 
     // Threads
-    private Thread playerLogicThread;
-    private Thread playerGraphicsThread;
-    private Thread playerMainThread;
+    private Thread playerThread;
     private volatile boolean running = true;
 
     private int points;
+    private Thread tileMapThread;
+
+
 
 
     // Player constructor
     public Player(TileMap tm) {
         super(tm);
-
-
 
         // player size
         width = 30;
@@ -68,13 +67,13 @@ public class Player extends MapObject {
         cHeight = 20;
 
         // player speed
-        moveSpeed = 0.2;
-        maxSpeed = 0.9;
+        moveSpeed = 0.3;
+        maxSpeed = 1.6;
         stopSpeed = 0.4;
-        fallSpeed = 0.1;
-        maxFallSpeed = 2.7;
-        jumpStart = -3.8;
-        stopJumpSpeed = 0.28;
+        fallSpeed = 0.15;
+        maxFallSpeed = 4.0;
+        jumpStart = -4.8;
+        stopJumpSpeed = 0.3;
 
         facingRight = true;
 
@@ -142,18 +141,31 @@ public class Player extends MapObject {
 
         // setting the delay
         animation.setDelay(400);
+    }
 
-        // Separate thread for logic
-        playerLogicThread = new Thread(this::playerLogic);
-        playerLogicThread.start();
 
-        // Separate thread for graphics
-        playerGraphicsThread = new Thread(this::playerGraphics);
-        playerGraphicsThread.start();
+    // Metoda run dla jednego wątku gracza
+    @Override
+    public void run() {
+        while (running && !Thread.interrupted()) {
+            update(); // Aktualizacja logiki gracza
 
-        // Separate main thread (for any additional main logic)
-        playerMainThread = new Thread(this::playerMain);
-        playerMainThread.start();
+            try {
+                Thread.sleep(10); // Dodatkowy delay dla wątku gracza
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // Przerwanie wątku po przechwyceniu InterruptedException
+            }
+        }
+    }
+
+    // Metoda zatrzymująca wątek logiki gracza
+    public void stopLogicThread() {
+        running = false;
+        try {
+            playerThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     // getting the parameters of the player
@@ -327,8 +339,7 @@ public class Player extends MapObject {
 
         // check if the player is done flinching
         if(flinching) {
-            long elapsed =
-                    (System.nanoTime() - flinchTimer) / 1000000;
+            long elapsed = (System.nanoTime() - flinchTimer) / 1000000;
             if(elapsed > 1000) {
                 flinching = false;
             }
@@ -450,51 +461,5 @@ public class Player extends MapObject {
         }
 
         super.draw(g);
-    }
-
-    public void stop() {
-        running = false;
-        try {
-            playerLogicThread.join();
-            playerGraphicsThread.join();
-            playerMainThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void playerLogic() {
-        while (running) {
-            update();
-            // Dodatkowa logika dla wątka logiki gracza
-            try {
-                Thread.sleep(16);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void playerGraphics() {
-        while (running) {
-            // Aktualizacja grafiki gracza
-            // (możesz dodać swoją logikę renderowania)
-            try {
-                Thread.sleep(16);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void playerMain() {
-        while (running) {
-            // Dodatkowa logika dla wątka głównego gracza
-            try {
-                Thread.sleep(16);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }
