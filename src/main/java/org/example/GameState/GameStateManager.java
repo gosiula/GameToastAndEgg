@@ -4,8 +4,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.Timer;
 
-import org.example.Entity.*;
-
 // HANDLING THE CURRENT STATE OF THE GAME
 public class GameStateManager {
 
@@ -22,12 +20,9 @@ public class GameStateManager {
     public static final int GAME_OVER_STATE = 3;
     public static final int CONGRATULATIONS_STATE = 4;
 
-    private int playerPoints;
-    private Timer congratulationsTimer;
-
     // GameStateManager constructor
     public GameStateManager() {
-        gameStates = new ArrayList<GameState>();
+        gameStates = new ArrayList<>();
         currentState = MENU_STATE;
 
         // adding available states to the ArrayList
@@ -37,23 +32,6 @@ public class GameStateManager {
         gameStates.add(new GameOver(this));
         gameStates.add(new Congratulations(this));
 
-        congratulationsTimer = new Timer(10000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Po upływie 7 sekund przejdź do stanu Congratulations
-                setState(GameStateManager.CONGRATULATIONS_STATE);
-                congratulationsTimer.stop(); // Zatrzymaj timer po przejściu do Congratulations
-            }
-        });
-    }
-
-    public void goToCongratulationsState(Player player) {
-        // Ustawienie obiektu gracza
-        Congratulations congratulationsState = new Congratulations(this);
-        congratulationsState.setPlayer(player);
-
-        // Uruchomienie timera oczekiwania 7 sekund
-        congratulationsTimer.start();
     }
 
     // setting the state based on the choice of the user

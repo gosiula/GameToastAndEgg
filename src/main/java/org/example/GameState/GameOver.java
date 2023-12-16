@@ -4,18 +4,15 @@ import org.example.TileMap.Background;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import org.example.Entity.*;
 
 public class GameOver extends GameState {
-
-    // adding back buffer
-    private BufferedImage backBuffer;
-
     // background
     private Background bg;
 
     // current choice
     private int currentChoice = 0;
+
+    private BufferedImage backBuffer;
 
     // table of options on the menu
     private final String[] options = { "Back To Menu", "Quit" };
@@ -35,13 +32,6 @@ public class GameOver extends GameState {
     private Color pinkColor;
     private Color purpleColor;
     private Color darkBrownColor;
-
-    // font of the instruction
-    private Font instructionFont;
-
-    private Player player;
-    private int playerPoints;
-
 
     // Help constructor
     public GameOver(GameStateManager gsm) {
@@ -63,7 +53,6 @@ public class GameOver extends GameState {
             this.pinkColor = new Color(231, 120, 231);
             this.purpleColor = new Color(131, 20, 131);
             this.darkBrownColor = new Color(51, 30, 10);
-            instructionFont = new Font("Century Gothic", Font.PLAIN, 9);
 
             // initialization of the back buffer
             backBuffer = new BufferedImage(GamePanel.WIDTH, GamePanel.HEIGHT, BufferedImage.TYPE_INT_RGB);
@@ -71,12 +60,6 @@ public class GameOver extends GameState {
             e.printStackTrace();
         }
     }
-
-    // Dodaj nową metodę do ustawiania obiektu gracza
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-
     public void initialization() {
 
     }
@@ -123,11 +106,9 @@ public class GameOver extends GameState {
         g.setColor(new Color(0, 0, 0, 80));  // Transparent navy blue color
         int rectWidth = 384;  // Adjust the rectangle width as needed
         int rectHeight = 288;  // Adjust the rectangle height as needed
-        int rectX = (GamePanel.WIDTH - rectWidth) / 2;
+        int rectX = 0;
         int rectY = 0;
-        int arcWidth = 10;  // Adjust the arc width as needed
-        int arcHeight = 10;  // Adjust the arc height as needed
-        g.fillRoundRect(rectX, rectY, rectWidth, rectHeight, arcWidth, arcHeight);
+        g.fillRect(rectX, rectY, rectWidth, rectHeight);
 
         // draw the title with black outline
         g.setColor(titleColor);
@@ -148,14 +129,9 @@ public class GameOver extends GameState {
 
         drawPlayerPoints(g);
 
-
-
         // draw menu options
         g.setFont(optionsFont);
         int startY = 195;
-
-        // Set the maximum width for text wrapping
-        int maxWidth = 320;  // Adjust the maximum width as needed
 
         g.setFont(optionsFont);
         // options to select
@@ -178,14 +154,11 @@ public class GameOver extends GameState {
                 g.fillRoundRect(x, y, textWidth + 20, 15, 5, 5);
                 g.setColor(darkBrownColor);
             }
-
             // drawing the border with text
             g.drawRoundRect(x, y, textWidth + 20, 15, 5, 5);
             g.drawString(options[i], x + 10, y + textHeight - 2);
         }
     }
-
-
 
     // choosing the option
     private void choose() {

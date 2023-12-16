@@ -5,13 +5,10 @@ import org.example.Main.GamePanel;
 import org.example.TileMap.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.Map;
 
 import org.example.Entity.Monster;
-
-import javax.imageio.ImageIO;
 
 // INITIALIZATION, UPDATING AND DRAWING OF LEVEL 1 STATE (BACKGROUND, PLAYER, ENEMIES, EXPLOSIONS, HUD)
 public class Level1 extends GameState {
@@ -41,12 +38,12 @@ public class Level1 extends GameState {
     private ArrayList<Tomato> tomatoList;
     private ArrayList<Avocado> avocadoList;
     private Egg egg;
+    boolean qKeyPressed = false;
 
     // Level1 constructor
     public Level1(GameStateManager gsm) {
         this.gsm = gsm;
         initialization();
-
 
         // initialization of the back buffer
         backBuffer = new BufferedImage(GamePanel.WIDTH, GamePanel.HEIGHT, BufferedImage.TYPE_INT_RGB);
@@ -59,6 +56,10 @@ public class Level1 extends GameState {
         // initialization of the tiles and the map
         tileMap.loadTiles("/TileSets/tile_set.png");
         tileMap.loadMap("/Maps/map.txt");
+        // adding enemies and setting their position
+        addingEnemies();
+        addingTomatoes();
+        addingAvocados();
 
         // setting position of the tileMap
         tileMap.setPosition(0, 0);
@@ -77,15 +78,8 @@ public class Level1 extends GameState {
         // position of the player
         player.setPosition(100, 100);
 
-        // adding enemies and setting their position
-        addingEnemies();
-
-        addingTomatoes();
-
-        addingAvocados();
-
         // initialization of explosions
-        explosions = new ArrayList<Explosion>();
+        explosions = new ArrayList<>();
 
         // initialization of the hud with the information about health, fireballs and earned points
         hud = new HUD(player);
@@ -157,7 +151,7 @@ public class Level1 extends GameState {
 
     private void addingEnemies() {
         // initialization of the enemies
-        enemies = new ArrayList<Enemy>();
+        enemies = new ArrayList<>();
 
         Monster s;
 
@@ -201,7 +195,7 @@ public class Level1 extends GameState {
         bg2.setPosition(tileMap.getx(), tileMap.gety());
 
         // egg position
-        egg.setPosition(3070,262);
+        egg.setPosition(3070,198);
 
         // checking is the enemies are attacked by the player
         player.checkAttack(enemies);
@@ -236,18 +230,41 @@ public class Level1 extends GameState {
 
 
 
-        if(player.getx() == 3040) {
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
+        if (player.getx() > 3000) {
+            if (isQKeyPressed()) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+                gsm.setState(GameStateManager.CONGRATULATIONS_STATE);
             }
-            gsm.setState(GameStateManager.CONGRATULATIONS_STATE);
         }
 
+
         if (player.isDead()) {
+            player.setPosition(100,100);
+            enemies = new ArrayList<>();
+            avocadoList = new ArrayList<>();
+            tomatoList = new ArrayList<>();
             gsm.setState(GameStateManager.GAME_OVER_STATE); // Przejdź do stanu GameOver
+            MapObject.xMap = 0;
+            MapObject.yMap = 0;
+            player.isAlive(false);
         }
+        else if(player.getx() > 3000 && !player.isDead() && isQKeyPressed()) {
+            player.setPosition(100, 100);
+            enemies = new ArrayList<>();
+            avocadoList = new ArrayList<>();
+            tomatoList = new ArrayList<>();
+            gsm.setState(GameStateManager.CONGRATULATIONS_STATE);
+            MapObject.xMap = 0;
+            MapObject.yMap = 0;
+        }
+    }
+
+    private boolean isQKeyPressed() {
+        return qKeyPressed; // Zakłada, że masz zmienną qKeyPressed przechowującą informację o tym, czy klawisz Q został naciśnięty
     }
 
     // drawing level 1
@@ -299,32 +316,26 @@ public class Level1 extends GameState {
 
     // handling the keys pressed in level 1 state
     public void keyPressed(int k) {
+        if (k == KeyEvent.VK_Q) {
+            qKeyPressed = true;
+        }
         switch (k) {
-            case KeyEvent.VK_LEFT:
-                player.setLeft(true);
-                break;
-            case KeyEvent.VK_RIGHT:
-                player.setRight(true);
-                break;
-            case KeyEvent.VK_UP:
-                player.setJumping(true);
-                break;
-            case KeyEvent.VK_SPACE:
-                player.setGliding(true);
-                break;
-            case KeyEvent.VK_S:
-                player.setScratching();
-                break;
-            case KeyEvent.VK_F:
-                player.setFiring();
-                break;
-            default:
-                break;
+            case KeyEvent.VK_LEFT -> player.setLeft(true);
+            case KeyEvent.VK_RIGHT -> player.setRight(true);
+            case KeyEvent.VK_UP -> player.setJumping(true);
+            case KeyEvent.VK_SPACE -> player.setGliding(true);
+            case KeyEvent.VK_S -> player.setScratching();
+            case KeyEvent.VK_F -> player.setFiring();
+            default -> {
+            }
         }
     }
 
     // handling the keys released in level 1 state
     public void keyReleased(int k) {
+        if (k == KeyEvent.VK_Q) {
+            qKeyPressed = false;
+        }
         switch (k) {
             case KeyEvent.VK_LEFT -> player.setLeft(false);
             case KeyEvent.VK_RIGHT -> player.setRight(false);

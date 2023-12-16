@@ -2,6 +2,8 @@ package org.example.GameState;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+
+import org.example.Entity.Player;
 import org.example.Main.GamePanel;
 import org.example.TileMap.Background;
 import java.awt.image.BufferedImage;

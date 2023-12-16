@@ -5,11 +5,11 @@ import org.example.TileMap.Tile;
 
 // THE GENERAL FUNCTIONS OF THE MAP OBJECTS
 public abstract class MapObject {
+    public static double yMap;
+    public static double xMap;
     // tile parameters
     protected TileMap tileMap;
     protected int tileSize;
-    protected double xMap;
-    protected double yMap;
 
     // position and vector
     protected double x;

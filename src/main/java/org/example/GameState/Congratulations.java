@@ -1,6 +1,5 @@
 package org.example.GameState;
 
-import org.example.Entity.Player;
 import org.example.Main.GamePanel;
 import org.example.TileMap.Background;
 
@@ -15,6 +14,7 @@ public class Congratulations extends GameState {
 
     // background
     private Background bg;
+    private Background bg2;
 
     // current choice
     private int currentChoice = 0;
@@ -38,16 +38,6 @@ public class Congratulations extends GameState {
     private Color purpleColor;
     private Color darkBrownColor;
 
-    // font of the instruction
-    private Font instructionFont;
-
-    private Player player;
-    private int playerPoints;
-    // Dodaj nowe pola do obsługi gratulacji
-    private boolean showCongratulations = false;
-    private long congratulationsStartTime;
-
-
     // Help constructor
     public Congratulations(GameStateManager gsm) {
         this.gsm = gsm;
@@ -55,6 +45,8 @@ public class Congratulations extends GameState {
         try {
             // initialization of the background and the speed of its movement
             bg = new Background("/Backgrounds/background_sky.png", 8);
+
+            bg2 = new Background("/Backgrounds/sandwich.png",0);
 
             // vector of the movement of the background
             bg.setVector(-0.1, 0);
@@ -68,20 +60,12 @@ public class Congratulations extends GameState {
             this.pinkColor = new Color(231, 120, 231);
             this.purpleColor = new Color(131, 20, 131);
             this.darkBrownColor = new Color(51, 30, 10);
-            instructionFont = new Font("Century Gothic", Font.PLAIN, 9);
 
             // initialization of the back buffer
             backBuffer = new BufferedImage(GamePanel.WIDTH, GamePanel.HEIGHT, BufferedImage.TYPE_INT_RGB);
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-
-
-    // Dodaj nową metodę do ustawiania obiektu gracza
-    public void setPlayer(Player player) {
-        this.player = player;
     }
 
     public void initialization() {
@@ -103,11 +87,6 @@ public class Congratulations extends GameState {
 
         // changing the buffers
         g.drawImage(backBuffer, 0, 0, null);
-
-        // Dodaj rysowanie gratulacji
-        if (showCongratulations) {
-            drawCongratulations(g);
-        }
     }
 
     private void drawPlayerPoints(Graphics2D g) {
@@ -135,9 +114,11 @@ public class Congratulations extends GameState {
         g.setColor(new Color(255, 113, 181, 105));  // Transparent navy blue color
         int rectWidth = 384;  // Adjust the rectangle width as needed
         int rectHeight = 288;  // Adjust the rectangle height as needed
-        int rectX = (GamePanel.WIDTH - rectWidth) / 2;
+        int rectX = 0;
         int rectY = 0;
         g.fillRect(rectX, rectY, rectWidth, rectHeight);
+
+        bg2.draw(g);
 
         // draw the title with black outline
         g.setColor(titleColor);
@@ -158,14 +139,9 @@ public class Congratulations extends GameState {
 
         drawPlayerPoints(g);
 
-
-
         // draw menu options
         g.setFont(optionsFont);
         int startY = 195;
-
-        // Set the maximum width for text wrapping
-        int maxWidth = 320;  // Adjust the maximum width as needed
 
         g.setFont(optionsFont);
         // options to select
@@ -188,24 +164,10 @@ public class Congratulations extends GameState {
                 g.fillRoundRect(x, y, textWidth + 20, 15, 5, 5);
                 g.setColor(darkBrownColor);
             }
-
             // drawing the border with text
             g.drawRoundRect(x, y, textWidth + 20, 15, 5, 5);
             g.drawString(options[i], x + 10, y + textHeight - 2);
-
-
-
         }
-    }
-
-    // Dodaj nową metodę do rysowania gratulacji
-    private void drawCongratulations(Graphics2D g) {
-        Font font = new Font("Century Gothic", Font.BOLD, 24);
-        Color textColor = new Color(255, 255, 255);
-
-        g.setFont(font);
-        g.setColor(textColor);
-        g.drawString("Congratulations!", 250, 150);
     }
 
     // choosing the option

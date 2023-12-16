@@ -1,5 +1,6 @@
 package org.example.Main;
 
+import org.example.GameState.GameOver;
 import org.example.GameState.GameStateManager;
 
 import javax.swing.*;
@@ -136,7 +137,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     // managing the pressing of a key and delegating to GameStateManager
     public void keyPressed(KeyEvent key) {
-        gsm.keyPressed(key.getKeyCode());
+        if (key.getKeyCode() == KeyEvent.VK_ENTER) {
+            gsm.keyPressed(key.getKeyCode());
+        } else {
+            gsm.keyPressed(key.getKeyCode());
+        }
     }
 
     // managing the releasing of a key and delegating to GameStateManager

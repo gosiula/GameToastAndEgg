@@ -7,12 +7,13 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
-public class Monster extends Enemy {
+public class Monster extends Enemy implements Runnable {
     private BufferedImage[] sprites;
-    private Thread monsterLogicThread1;
-    private Thread monsterGraphicsThread;
-    private Thread monsterMainThread;
-    private volatile boolean running = true;
+
+    @Override
+    public void run() {
+
+    }
 
     public Monster(TileMap tm) {
         super(tm);
@@ -38,7 +39,7 @@ public class Monster extends Enemy {
             );
 
             sprites = new BufferedImage[3];
-            for(int i = 0; i < sprites.length; i++) {
+            for (int i = 0; i < sprites.length; i++) {
                 sprites[i] = spriteSheet.getSubimage(
                         i * width,
                         0,
@@ -46,8 +47,7 @@ public class Monster extends Enemy {
                         height
                 );
             }
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -60,20 +60,19 @@ public class Monster extends Enemy {
     }
 
     private void getNextPosition() {
-        if(left) {
+        if (left) {
             dx -= moveSpeed;
-            if(dx < -maxSpeed) {
+            if (dx < -maxSpeed) {
                 dx = -maxSpeed;
             }
-        }
-        else if(right) {
+        } else if (right) {
             dx += moveSpeed;
-            if(dx > maxSpeed) {
+            if (dx > maxSpeed) {
                 dx = maxSpeed;
             }
         }
 
-        if(falling) {
+        if (falling) {
             dy += fallSpeed;
         }
     }
@@ -83,20 +82,19 @@ public class Monster extends Enemy {
         checkTileMapCollision();
         setPosition(xTemporary, yTemporary);
 
-        if(flinching) {
+        if (flinching) {
             long elapsed =
                     (System.nanoTime() - flinchTimer) / 1000000;
-            if(elapsed > 400) {
+            if (elapsed > 400) {
                 flinching = false;
             }
         }
 
-        if(right && dx == 0) {
+        if (right && dx == 0) {
             right = false;
             left = true;
             facingRight = false;
-        }
-        else if(left && dx == 0) {
+        } else if (left && dx == 0) {
             right = true;
             left = false;
             facingRight = true;
@@ -110,59 +108,4 @@ public class Monster extends Enemy {
         super.draw(g);
     }
 
-    public void start() {
-        monsterLogicThread = new Thread(this::monsterLogic);
-        monsterGraphicsThread = new Thread(this::monsterGraphics);
-        monsterMainThread = new Thread(this::monsterMain);
-
-        monsterLogicThread.start();
-        monsterGraphicsThread.start();
-        monsterMainThread.start();
-    }
-
-    public void stop() {
-        running = false;
-        try {
-            monsterLogicThread.join();
-            monsterGraphicsThread.join();
-            monsterMainThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void monsterLogic() {
-        while (running) {
-            update();
-            // Dodatkowa logika dla wątka logiki potwora
-            try {
-                Thread.sleep(16);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void monsterGraphics() {
-        while (running) {
-            // Aktualizacja grafiki potwora
-            // (możesz dodać swoją logikę renderowania)
-            try {
-                Thread.sleep(16);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void monsterMain() {
-        while (running) {
-            // Dodatkowa logika dla wątka głównego potwora
-            try {
-                Thread.sleep(16);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 }

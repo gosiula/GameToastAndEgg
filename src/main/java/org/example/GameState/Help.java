@@ -149,11 +149,11 @@ public class Help extends GameState {
                 "Good luck!";
 
         // Split the help text into lines with text wrapping
-        ArrayList<String> lines = new ArrayList<String>();
+        ArrayList<String> lines = new ArrayList<>();
         String[] words = helpText.split("\\s+");
         StringBuilder currentLine = new StringBuilder();
         for (String word : words) {
-            if (g.getFontMetrics().stringWidth(currentLine.toString() + " " + word) < maxWidth) {
+            if (g.getFontMetrics().stringWidth(currentLine + " " + word) < maxWidth) {
                 currentLine.append(word).append(" ");
             } else {
                 lines.add(currentLine.toString());

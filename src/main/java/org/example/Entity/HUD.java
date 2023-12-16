@@ -60,7 +60,7 @@ public class HUD {
         g.setColor(new Color(255, 255, 255));
         g.setFont(font);
         g.drawString(player.getHealth() + "/" + player.getMaxHealth(), 30, 35);
-        g.drawString(player.getFire() / 100 + "/" + player.getMaxFire() / 100, 25, 55);
-        g.drawString(String.valueOf(player.getPoints()),  45, 76);
+        g.drawString(player.getFire() / 100 + "/" + player.getMaxFire() / 100, 30, 55);
+        g.drawString(String.valueOf(player.getPoints()),  38, 76);
     }
 }

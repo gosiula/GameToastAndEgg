@@ -1,14 +1,11 @@
 package org.example.Entity;
 
-import org.example.Main.GamePanel;
 import org.example.TileMap.*;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
-
-import static org.example.Main.GamePanel.HEIGHT;
 
 // CREATING A PLAYER AND DEFINING THE WORKING OF MOVEMENT, ATTACKS, ANIMATION
 // AND THE INTERACTION WITH OTHER OBJECTS
@@ -21,7 +18,7 @@ public class Player extends MapObject {
     private final int maxFire;
     private boolean flinching;
     private long flinchTimer;
-    private boolean dead;
+    public boolean dead;
 
     // fireball parameters
     private boolean firing;
@@ -62,6 +59,8 @@ public class Player extends MapObject {
     public Player(TileMap tm) {
         super(tm);
 
+
+
         // player size
         width = 30;
         height = 30;
@@ -81,7 +80,7 @@ public class Player extends MapObject {
 
         // player health and fireballs
         health = maxHealth = 5;
-        fire = maxFire = 1000;
+        fire = maxFire = 500;
         fireCost = 200;
         fireBallDamage = 5;
         fireBalls = new ArrayList<>();
@@ -98,14 +97,14 @@ public class Player extends MapObject {
         try {
             BufferedImage spriteSheet = ImageIO.read(
                     Objects.requireNonNull(getClass().getResourceAsStream(
-                            "/Player/player_sprites.gif"
+                            "/Player/henio_the_bread.png"
                     ))
             );
 
             // getting the desired sub image
             sprites = new ArrayList<>();
             for(int i = 0; i < 7; i++) {
-                int[] numFrames = {2, 8, 1, 2, 4, 2, 5};
+                int[] numFrames = {9, 2, 1, 1, 4, 3, 5};
                 BufferedImage[] bi = new BufferedImage[numFrames[i]];
 
                 for(int j = 0; j < numFrames[i]; j++) {
@@ -284,9 +283,10 @@ public class Player extends MapObject {
 
     // updating the player
     public void update() {
+
         if (y >= 270) {
-            health = 0;
             dead = true;
+            health = 5;
         }
 
         if(dead) return;
@@ -406,7 +406,13 @@ public class Player extends MapObject {
     }
 
     public boolean isDead() {
+        if(dead) { health = 5; }
         return dead;
+    }
+
+    public void isAlive(boolean alive) {
+        dead = alive;
+        if(!alive) health = 5;
     }
 
     public double getHeight() {
@@ -425,10 +431,6 @@ public class Player extends MapObject {
 
     // drawing the player
     public void draw(Graphics2D g) {
-        if (dead) {
-            // Dodaj tutaj kod rysowania stanu martwego gracza lub ekranu końca gry
-            return;
-        }
 
         // setting map position
         setMapPosition();
