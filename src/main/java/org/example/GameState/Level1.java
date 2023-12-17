@@ -84,7 +84,7 @@ public class Level1 extends GameState {
         explosions = new ArrayList<>();
 
         // initialization of the hud with the information about health, fireballs and earned points
-        hud = new HUD(player);
+        hud = new HUD(player, gsm);
     }
 
 

@@ -2,13 +2,11 @@ package org.example.Main;
 import org.example.Entity.*;
 import org.example.GameState.GameStateManager;
 import org.example.TileMap.*;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
-import java.sql.SQLOutput;
 
 
 // CREATING A PANEL, STARTING THE GAME, IMAGES AND GSM
@@ -23,30 +21,34 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     public static final int SCALE = 2;
 
 
-    // Thread usage
+    // thread usage
     private static Player player;
     private static TileMap tileMap;
     private static Monster monster;
     private static Tomato tomato;
     private static Avocado avocado;
-
     private static Explosion explosion;
     private static FireBall fireball;
     private static HUD hud;
     private static Egg egg;
 
-    // game thread
+
+    // main game thread
     private Thread mainThread;
+
 
     // the running of the thread
     private boolean threadIsRunning;
 
-    // images
+    // images and graphics
     private BufferedImage image;
     private Graphics2D g;
 
+
     // game state manager
     private GameStateManager gsm;
+
+    // game threads
     private static Thread playerThread;
     public static Thread tileMapThread;
     public static Thread monsterThread;
@@ -60,6 +62,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     // GamePanel constructor
     public GamePanel() {
+        // calling the constructor of the parent class
         super();
 
         // setting preferable size of the panel
@@ -94,6 +97,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         // creating a GameStateManager
         gsm = new GameStateManager();
 
+        // starting threads
         startThreads();
     }
 
@@ -140,14 +144,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
 
     // updating the game
-    private void update() {
-        gsm.update();
-    }
+    private void update() { gsm.update(); }
 
     // drawing the game
-    private void draw() {
-        gsm.draw(g);
-    }
+    private void draw() { gsm.draw(g); }
 
     // drawing the image on the screen
     private void drawToScreen() {
@@ -161,6 +161,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         g2.dispose();
     }
 
+    // starting threads
     public static void startThreads() {
         startPlayerThread(player);
         startTileMapThread(tileMap);
@@ -173,16 +174,17 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         startEggThread(egg);
     }
 
-        public static void stopThreads() {
-            stopPlayerThread();
-            stopTileMapThread();
-            stopMonsterThread();
-            stopTomatoThread();
-            stopAvocadoThread();
-            stopFireBallThread();
-            stopHUDThread();
-            stopExplosionThread();
-            stopEggThread();
+    // stopping threads
+    public static void stopThreads() {
+        stopPlayerThread();
+        stopTileMapThread();
+        stopMonsterThread();
+        stopTomatoThread();
+        stopAvocadoThread();
+        stopFireBallThread();
+        stopHUDThread();
+        stopExplosionThread();
+        stopEggThread();
     }
 
     public static void startTileMapThread(TileMap tileMap) {
@@ -231,7 +233,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         eggThread.start();
     }
 
-    // Metoda zatrzymująca wątek gracza
     public static void stopPlayerThread() {
         if (playerThread != null && playerThread.isAlive()) {
             playerThread.interrupt(); // Przerwanie wątku gracza
@@ -332,13 +333,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     }
 
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g.create();
-        // You can perform additional drawing operations here if needed
-        g2d.dispose();
-    }
+
 
     public void keyTyped(KeyEvent key) {
     }

@@ -1,7 +1,5 @@
 package org.example.GameState;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
+
 import javax.swing.Timer;
 
 import static org.example.Music.Music.*;
@@ -10,6 +8,7 @@ import static org.example.Music.Music.*;
 public class GameStateManager {
     private long startTime;
     private long stopTime;
+    private Timer timer;
 
     // ArrayList of the states
     private final GameState[] gameStates;
@@ -25,6 +24,8 @@ public class GameStateManager {
     public static final int GAME_OVER_STATE = 3;
     public static final int CONGRATULATIONS_STATE = 4;
 
+    long elapsedTime;
+
     // GameStateManager constructor
     public GameStateManager() {
         gameStates = new GameState[NUMSTATES];
@@ -33,32 +34,38 @@ public class GameStateManager {
         // adding available states to the ArrayList
         loadState(currentState);
 
+        // Initialize the timer to update the elapsed time every second
+        timer = new Timer(1000, e -> updateElapsedTime());
+        timer.start();
     }
 
     private void loadState(int state) {
-        if(state == MENU_STATE) {
+        if (state == MENU_STATE) {
+            elapsedTime = 0;
             menuMusic();
             gameStates[state] = new Menu(this);
         }
-        if(state == LEVEL_1_STATE) {
+        if (state == LEVEL_1_STATE) {
             backgroundMusic();
             startTime = System.currentTimeMillis();
             gameStates[state] = new Level1(this);
         }
-        if(state == HELP_STATE) gameStates[state] = new Help(this);
-        if(state == GAME_OVER_STATE) {
+        if (state == HELP_STATE) gameStates[state] = new Help(this);
+        if (state == GAME_OVER_STATE) {
             stopBgMusic();
             stopTime = System.currentTimeMillis();
-            long elapsedTime = (stopTime - startTime) / 1000;
-            System.out.println("Czas działania klasy: " + elapsedTime + " sekund.");
+            elapsedTime = (stopTime - startTime) / 1000;
             gameStates[state] = new GameOver(this);
         }
-        if(state == CONGRATULATIONS_STATE) {
+        if (state == CONGRATULATIONS_STATE) {
             stopTime = System.currentTimeMillis();
-            long elapsedTime = (stopTime - startTime) / 1000;
-            System.out.println("Czas działania klasy: " + elapsedTime + " sekund.");
+            elapsedTime = (stopTime - startTime) / 1000;
             gameStates[state] = new Congratulations(this);
         }
+    }
+
+    public long getElapsedTime() {
+        return elapsedTime;
     }
 
     private void unloadState(int state) {
@@ -74,26 +81,27 @@ public class GameStateManager {
         // Reset the shouldLoop flag when changing states
         resetShouldLoop();
 
-        //gameStates[currentState].initialization();
+        // gameStates[currentState].initialization();
     }
 
     public static int getCurrentState() {
         return currentState;
     }
 
-
     // updating to the current state of the game
     public void update() {
         try {
             gameStates[currentState].update();
-        } catch(Exception e) {}
+        } catch (Exception e) {
+        }
     }
 
     // drawing the current state of the game
     public void draw(java.awt.Graphics2D g) {
         try {
             gameStates[currentState].draw(g);
-        } catch(Exception e) {}
+        } catch (Exception e) {
+        }
     }
 
     // handling the pressed key for the current state
@@ -106,4 +114,11 @@ public class GameStateManager {
         gameStates[currentState].keyReleased(k);
     }
 
+    // Update elapsed time every second
+    private void updateElapsedTime() {
+        if (currentState == LEVEL_1_STATE) {
+            stopTime = System.currentTimeMillis();
+            elapsedTime = (stopTime - startTime) / 1000;
+        }
+    }
 }

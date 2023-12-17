@@ -40,6 +40,8 @@ public class Congratulations extends GameState {
     private Color pinkColor;
     private Color purpleColor;
     private Color darkBrownColor;
+    private Color frameColor;
+    private Color textColor;
 
     // Help constructor
     public Congratulations(GameStateManager gsm) {
@@ -63,6 +65,8 @@ public class Congratulations extends GameState {
             this.pinkColor = new Color(231, 120, 231);
             this.purpleColor = new Color(131, 20, 131);
             this.darkBrownColor = new Color(51, 30, 10);
+            this.frameColor = new Color(0, 0, 0);
+            this.textColor = new Color(255, 255, 255);
 
             // initialization of the back buffer
             backBuffer = new BufferedImage(GamePanel.WIDTH, GamePanel.HEIGHT, BufferedImage.TYPE_INT_RGB);
@@ -93,22 +97,44 @@ public class Congratulations extends GameState {
     }
 
     private void drawPlayerPoints(Graphics2D g) {
+        int points;
+        if(gsm.getElapsedTime() > 0) {
+            points = Level1.getFinalPoints() + 100 - (int) gsm.getElapsedTime();
+        } else {
+            points = Level1.getFinalPoints();
+        }
+
         // Ustawienia czcionki i koloru
         Font font = new Font("Century Gothic", Font.PLAIN, 24);
-        Color textColor = new Color(255, 255, 255);
 
         // Przygotowanie do rysowania napisu z cieniem
         g.setFont(font);
-        g.setColor(new Color(0, 0, 0));
-        g.drawString("Points: " + Level1.getFinalPoints(), 138, 151);
-        g.drawString("Points: " + Level1.getFinalPoints(), 136, 151);
-        g.drawString("Points: " + Level1.getFinalPoints(), 136, 149);
-        g.drawString("Points: " + Level1.getFinalPoints(), 138, 149);
+        g.setColor(frameColor);
+        g.drawString("Points: " + points, 138, 171);
+        g.drawString("Points: " + points, 136, 171);
+        g.drawString("Points: " + points, 136, 169);
+        g.drawString("Points: " + points, 138, 169);
 
         // Rysowanie właściwego napisu
         g.setColor(textColor);
-        g.drawString("Points: " + Level1.getFinalPoints(), 137, 150);
+
+        g.drawString("Points: " + points, 137, 170);
+
+        // Format the time to display in the format 00:00
+        int minutes = (int) gsm.getElapsedTime() / 60;
+        int seconds = (int) gsm.getElapsedTime() % 60;
+        String formattedTime = String.format("%02d:%02d", minutes, seconds);
+
+        g.setColor(frameColor);
+        g.drawString("Time: " + formattedTime, 132, 194);
+        g.drawString("Time: " + formattedTime, 130, 194);
+        g.drawString("Time: " + formattedTime, 130, 196);
+        g.drawString("Time: " + formattedTime, 132, 196);
+
+        g.setColor(textColor);
+        g.drawString("Time: " + formattedTime, 131, 195);
     }
+
 
     private void drawGameOver(Graphics2D g) {
         // draw background
@@ -144,7 +170,7 @@ public class Congratulations extends GameState {
 
         // draw menu options
         g.setFont(optionsFont);
-        int startY = 195;
+        int startY = 220;
 
         g.setFont(optionsFont);
         // options to select
