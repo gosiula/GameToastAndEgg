@@ -1,27 +1,28 @@
 package org.example.Entity;
-
 import org.example.TileMap.TileMap;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
 
+// AVOCADO
 public class Avocado extends MapObject implements Runnable{
-
+    // image
     private BufferedImage image;
-    private final boolean running = true;
 
-
+    // Avocado constructor
     public Avocado(TileMap tm) {
+        // calling the constructor of the parent class
         super(tm);
+
+        // avocado size
         width = 30;
         height = 30;
         cWidth = 20;
         cHeight = 20;
 
-        // Load the image for the money
+        // loading the image
         try {
             image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Prizes/avocado.png")));
         } catch (IOException e) {
@@ -29,23 +30,22 @@ public class Avocado extends MapObject implements Runnable{
         }
     }
 
-    public void update() {
-        // Money doesn't need to be updated actively
-    }
+    public void update() { }
 
+    // running the thread in GamePanel
     @Override
     public void run() {
-        while (running && !Thread.interrupted()) {
-            update(); // Aktualizacja logiki gracza
+        while (!Thread.interrupted()) {
+            update();
 
             try {
-                Thread.sleep(10); // Dodatkowy delay dla wątku gracza
+                Thread.sleep(10);
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt(); // Przerwanie wątku po przechwyceniu InterruptedException
             }
         }
     }
 
+    // drawing the avocado
     public void draw(Graphics2D g) {
         setMapPosition();
         g.drawImage(image, (int) (x + xMap - width / 2), (int) (y + yMap - height / 2), null);

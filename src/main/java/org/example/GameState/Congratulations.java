@@ -1,15 +1,13 @@
 package org.example.GameState;
-
 import org.example.Main.GamePanel;
 import org.example.TileMap.Background;
-
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import static org.example.Music.Music.choosingSound;
+import static org.example.Music.Music.stopChoosingSound;
 
-import static org.example.Music.Music.choosingMusic;
-import static org.example.Music.Music.stopChoosingMusic;
-
+// INITIALIZATION AND DRAWING OF CONGRATULATIONS STATE (BACKGROUND, TITLE, OPTIONS, SOUNDS)
 public class Congratulations extends GameState {
 
     // adding back buffer
@@ -43,6 +41,12 @@ public class Congratulations extends GameState {
     private Color frameColor;
     private Color textColor;
 
+    // text font
+    private Font textFont;
+
+    // color of the pink rectangle on the background
+    private Color pinkRectangleColor;
+
     // Help constructor
     public Congratulations(GameStateManager gsm) {
         this.gsm = gsm;
@@ -50,7 +54,6 @@ public class Congratulations extends GameState {
         try {
             // initialization of the background and the speed of its movement
             bg = new Background("/Backgrounds/background_sky.png", 8);
-
             bg2 = new Background("/Backgrounds/sandwich.png",0);
 
             // vector of the movement of the background
@@ -67,6 +70,8 @@ public class Congratulations extends GameState {
             this.darkBrownColor = new Color(51, 30, 10);
             this.frameColor = new Color(0, 0, 0);
             this.textColor = new Color(255, 255, 255);
+            this.pinkRectangleColor = new Color(255, 113, 181, 105);
+            textFont = new Font("Century Gothic", Font.PLAIN, 24);
 
             // initialization of the back buffer
             backBuffer = new BufferedImage(GamePanel.WIDTH, GamePanel.HEIGHT, BufferedImage.TYPE_INT_RGB);
@@ -75,13 +80,9 @@ public class Congratulations extends GameState {
         }
     }
 
-    public void initialization() {
+    public void initialization() { }
 
-    }
-
-    public void update() {
-        bg.update();
-    }
+    public void update() { bg.update(); }
 
     public void draw(Graphics2D g) {
         // drawing on the back buffer
@@ -96,7 +97,8 @@ public class Congratulations extends GameState {
         g.drawImage(backBuffer, 0, 0, null);
     }
 
-    private void drawPlayerPoints(Graphics2D g) {
+    private void drawPlayerPointsAndTime(Graphics2D g) {
+        // calculating final points
         int points;
         if(gsm.getElapsedTime() > 0) {
             points = Level1.getFinalPoints() + 100 - (int) gsm.getElapsedTime();
@@ -104,49 +106,44 @@ public class Congratulations extends GameState {
             points = Level1.getFinalPoints();
         }
 
-        // Ustawienia czcionki i koloru
-        Font font = new Font("Century Gothic", Font.PLAIN, 24);
-
-        // Przygotowanie do rysowania napisu z cieniem
-        g.setFont(font);
+        // draw the points with black outline
+        g.setFont(textFont);
         g.setColor(frameColor);
         g.drawString("Points: " + points, 138, 171);
         g.drawString("Points: " + points, 136, 171);
         g.drawString("Points: " + points, 136, 169);
         g.drawString("Points: " + points, 138, 169);
-
-        // Rysowanie właściwego napisu
         g.setColor(textColor);
-
         g.drawString("Points: " + points, 137, 170);
 
-        // Format the time to display in the format 00:00
+        // changing the format of the time to display in the format 00:00
         int minutes = (int) gsm.getElapsedTime() / 60;
         int seconds = (int) gsm.getElapsedTime() % 60;
         String formattedTime = String.format("%02d:%02d", minutes, seconds);
 
+        // draw the time with black outline
         g.setColor(frameColor);
         g.drawString("Time: " + formattedTime, 132, 194);
         g.drawString("Time: " + formattedTime, 130, 194);
         g.drawString("Time: " + formattedTime, 130, 196);
         g.drawString("Time: " + formattedTime, 132, 196);
-
         g.setColor(textColor);
         g.drawString("Time: " + formattedTime, 131, 195);
     }
-
 
     private void drawGameOver(Graphics2D g) {
         // draw background
         bg.draw(g);
 
-        g.setColor(new Color(255, 113, 181, 105));  // Transparent navy blue color
-        int rectWidth = 384;  // Adjust the rectangle width as needed
-        int rectHeight = 288;  // Adjust the rectangle height as needed
+        // transparent pink rectangle
+        g.setColor(pinkRectangleColor);
+        int rectWidth = 384;
+        int rectHeight = 288;
         int rectX = 0;
         int rectY = 0;
         g.fillRect(rectX, rectY, rectWidth, rectHeight);
 
+        // draw second background
         bg2.draw(g);
 
         // draw the title with black outline
@@ -159,20 +156,20 @@ public class Congratulations extends GameState {
 
         // draw "He" in brown
         g.setColor(LightBrownColor);
-        g.setFont(titleFont);
         g.drawString("Congratu", 61, 99);
 
         // draw "lp" in yellow
         g.setColor(yellowColor);
         g.drawString("lations !", 206, 99);
 
-        drawPlayerPoints(g);
+        // drawing player points and time
+        drawPlayerPointsAndTime(g);
 
-        // draw menu options
         g.setFont(optionsFont);
+
+        // location y of the options to select
         int startY = 220;
 
-        g.setFont(optionsFont);
         // options to select
         for (int i = 0; i < options.length; i++) {
             int textWidth = (int) g.getFontMetrics().getStringBounds(options[i], g).getWidth();
@@ -214,18 +211,18 @@ public class Congratulations extends GameState {
     // handling the pressed key in the help state
     public void keyPressed(int k) {
         if (k == KeyEvent.VK_ENTER) {
-            stopChoosingMusic();
+            stopChoosingSound();
             choose();
         }
         if (k == KeyEvent.VK_UP) {
-            choosingMusic();
+            choosingSound();
             currentChoice--;
             if (currentChoice == -1) {
                 currentChoice = options.length - 1;
             }
         }
         if (k == KeyEvent.VK_DOWN) {
-            choosingMusic();
+            choosingSound();
             currentChoice++;
             if (currentChoice == options.length) {
                 currentChoice = 0;
@@ -233,7 +230,5 @@ public class Congratulations extends GameState {
         }
     }
 
-    public void keyReleased(int k) {
-
-    }
+    public void keyReleased(int k) { }
 }

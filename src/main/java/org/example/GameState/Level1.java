@@ -6,12 +6,10 @@ import org.example.TileMap.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-
-import org.example.Entity.Monster;
-
+import org.example.Entity.Ghost;
 import static org.example.Music.Music.*;
 
-// INITIALIZATION, UPDATING AND DRAWING OF LEVEL 1 STATE (BACKGROUND, PLAYER, ENEMIES, EXPLOSIONS, HUD)
+// INITIALIZATION, UPDATING AND DRAWING OF LEVEL 1 STATE (BACKGROUND, PLAYER, ENEMIES, EXPLOSIONS, HUD, SOUNDS)
 public class Level1 extends GameState {
     // adding the back buffer
     private final BufferedImage backBuffer;
@@ -34,11 +32,17 @@ public class Level1 extends GameState {
     // hud with the information about health, fireballs and earned points
     private HUD hud;
 
+    // final points
     private static int final_points;
 
+    // arraylists with tomatoes and avocados
     private ArrayList<Tomato> tomatoList;
     private ArrayList<Avocado> avocadoList;
+
+    // egg
     private Egg egg;
+
+    // the boolean saying if the q button was pressed
     boolean qKeyPressed = false;
 
     // Level1 constructor
@@ -72,6 +76,7 @@ public class Level1 extends GameState {
         bg = new Background("/Backgrounds/background_sky.png", 0.1);
         bg2 = new Background("/Backgrounds/background_mountains.png", 0);
 
+        // initialization of the egg
         egg  = new Egg(tileMap);
 
         // initialization of the player
@@ -87,15 +92,18 @@ public class Level1 extends GameState {
         hud = new HUD(player, gsm);
     }
 
-
     private void checkTomatoCollisions() {
         for (int i = 0; i < tomatoList.size(); i++) {
             Tomato tomato = tomatoList.get(i);
             if (player.intersects(tomato)) {
-                scoreMusic();
+                scoreSound();
+
+                // removing the collected tomato
                 tomatoList.remove(i);
                 i--;
-                player.addPoints(2); // Adjust the points accordingly
+
+                // adding 2 points for the tomato
+                player.addPoints(2);
             }
         }
     }
@@ -104,10 +112,14 @@ public class Level1 extends GameState {
         for (int i = 0; i < avocadoList.size(); i++) {
             Avocado avocado = avocadoList.get(i);
             if (player.intersects(avocado)) {
-                scoreMusic();
+                scoreSound();
+
+                // removing the collected avocado
                 avocadoList.remove(i);
                 i--;
-                player.addPoints(4); // Adjust the points accordingly
+
+                // adding 4 points for the avocado
+                player.addPoints(4);
             }
         }
     }
@@ -115,7 +127,7 @@ public class Level1 extends GameState {
     private void addingTomatoes() {
         tomatoList = new ArrayList<>();
         Tomato tomato;
-        // locations of the avocados
+        // locations of the tomatoes
         Point[] points = new Point[] {
                 new Point(365, 136),
                 new Point(710, 256),
@@ -124,7 +136,7 @@ public class Level1 extends GameState {
                 new Point(1905, 196)
         };
 
-        // adding monsters to the chosen locations
+        // adding tomatoes to the chosen locations
         for (Point point : points) {
             tomato = new Tomato(tileMap);
             tomato.setPosition(point.x, point.y);
@@ -144,7 +156,7 @@ public class Level1 extends GameState {
                 new Point(2455, 254)
         };
 
-        // adding monsters to the chosen locations
+        // adding avocados to the chosen locations
         for (Point point : points) {
             avocado = new Avocado(tileMap);
             avocado.setPosition(point.x, point.y);
@@ -157,9 +169,9 @@ public class Level1 extends GameState {
         // initialization of the enemies
         enemies = new ArrayList<>();
 
-        Monster s;
+        Ghost g;
 
-        // locations of the monsters
+        // locations of the ghosts
         Point[] points = new Point[] {
                 new Point(780, 248),
                 new Point(990, 248),
@@ -173,20 +185,23 @@ public class Level1 extends GameState {
                 new Point(2520, 248)
         };
 
-        // adding monsters to the chosen locations
+        // adding ghosts to the chosen locations
         for (Point point : points) {
-            s = new Monster(tileMap);
-            s.setPosition(point.x, point.y);
-            enemies.add(s);
+            g = new Ghost(tileMap);
+            g.setPosition(point.x, point.y);
+            enemies.add(g);
         }
     }
 
     public static int getFinalPoints() {
         return final_points;
     }
+
     // updating level 1
     public void update() {
+        // getting final points of the player
         final_points = player.getPoints();
+
         // updating the player
         player.update();
         tileMap.setPosition(
@@ -228,38 +243,59 @@ public class Level1 extends GameState {
             }
         }
 
+        // checking if the player collected any tomatoes
         checkTomatoCollisions();
 
+        // checking if the player collected any avocados
         checkAvocadoCollisions();
 
-
+        // checking if the player is dead
         if (player.isDead()) {
             player.setPosition(100,100);
+
+            // emptying the lists
             enemies = new ArrayList<>();
             avocadoList = new ArrayList<>();
             tomatoList = new ArrayList<>();
+
+            // stopping the threads
             GamePanel.stopThreads();
+
             stopBgMusic();
-            gameOverMusic();
-            gsm.setState(GameStateManager.GAME_OVER_STATE); // Przejdź do stanu GameOver
+            gameOverSounds();
+
+            // going to game over state
+            gsm.setState(GameStateManager.GAME_OVER_STATE);
+
+            // making the player alive again to be ready for the next game
             player.isAlive(false);
+
+            // starting the threads again
             GamePanel.startThreads();
         }
         else if(player.getx() > 3000 && !player.isDead() && isQKeyPressed()) {
             player.setPosition(100, 100);
+
+            // emptying the lists
             enemies = new ArrayList<>();
             avocadoList = new ArrayList<>();
             tomatoList = new ArrayList<>();
+
+            // stopping the threads
             GamePanel.stopThreads();
             stopBgMusic();
-            congratulationsMusic();
+            congratulationsSound();
+
+            // going to the congratulations state
             gsm.setState(GameStateManager.CONGRATULATIONS_STATE);
+
+            // starting the threads again
             GamePanel.startThreads();
         }
     }
 
     private boolean isQKeyPressed() {
-        return qKeyPressed; // Zakłada, że masz zmienną qKeyPressed przechowującą informację o tym, czy klawisz Q został naciśnięty
+        return qKeyPressed;
     }
 
     // drawing level 1
@@ -281,12 +317,15 @@ public class Level1 extends GameState {
         // drawing the player on the back buffer
         player.draw(backBufferGraphics);
 
+        // drawing th egg on the back buffer
         egg.draw(backBufferGraphics);
 
+        // drawing the tomatoes on the back buffer
         for (Tomato tomato : tomatoList) {
             tomato.draw(backBufferGraphics);
         }
 
+        // drawing the avocados on the back buffer
         for (Avocado avocado : avocadoList) {
             avocado.draw(backBufferGraphics);
         }
@@ -319,7 +358,7 @@ public class Level1 extends GameState {
             case KeyEvent.VK_RIGHT -> player.setRight(true);
             case KeyEvent.VK_UP -> player.setJumping(true);
             case KeyEvent.VK_SPACE -> player.setGliding(true);
-            case KeyEvent.VK_S -> player.setScratching();
+            case KeyEvent.VK_S -> player.setPunching();
             case KeyEvent.VK_F -> player.setFiring();
             default -> {
             }
@@ -340,6 +379,4 @@ public class Level1 extends GameState {
             }
         }
     }
-
-
 }

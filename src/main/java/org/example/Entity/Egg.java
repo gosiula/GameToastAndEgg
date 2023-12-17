@@ -1,26 +1,26 @@
 package org.example.Entity;
-
 import org.example.TileMap.TileMap;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
 
+// EGG
 public class Egg extends MapObject implements Runnable{
-
+    // image
     private BufferedImage image;
-    private final boolean running = true;
 
     public Egg(TileMap tm) {
+        // calling the constructor of the parent class
         super(tm);
+
+        // egg size
         width = 30;
         height = 30;
-        cWidth = 20;
-        cHeight = 20;
 
-        // Load the image for the money
+
+        // loading the image
         try {
             image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Egg/julek_the_egg.png")));
         } catch (IOException e) {
@@ -28,19 +28,18 @@ public class Egg extends MapObject implements Runnable{
         }
     }
 
-    public void update() {
+    public void update() { }
 
-    }
-
+    // running the thread in GamePanel
     @Override
     public void run() {
-        while (running && !Thread.interrupted()) {
-            update(); // Aktualizacja logiki gracza
+        while (!Thread.interrupted()) {
+            update();
 
             try {
-                Thread.sleep(10); // Dodatkowy delay dla wątku gracza
+                Thread.sleep(10);
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt(); // Przerwanie wątku po przechwyceniu InterruptedException
+                Thread.currentThread().interrupt();
             }
         }
     }

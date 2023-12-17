@@ -1,12 +1,10 @@
 package org.example.Entity;
-
 import org.example.TileMap.*;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
-
 import static org.example.Music.Music.*;
 
 // CREATING A PLAYER AND DEFINING THE WORKING OF MOVEMENT, ATTACKS, ANIMATION
@@ -25,13 +23,13 @@ public class Player extends MapObject implements Runnable{
     // fireball parameters
     private boolean firing;
     private final int fireCost;
-    private final int fireBallDamage;
-    private final ArrayList<FireBall> fireBalls;
+    private final int fireballDamage;
+    private final ArrayList<Fireball> fireballs;
 
-    // scratching
-    private boolean scratching;
-    private final int scratchDamage;
-    private final int scratchRange;
+    // punching
+    private boolean punching;
+    private final int punchDamage;
+    private final int punchRange;
 
     // gliding
     private boolean gliding;
@@ -46,17 +44,11 @@ public class Player extends MapObject implements Runnable{
     private static final int FALLING = 3;
     private static final int GLIDING = 4;
     private static final int FIREBALL = 5;
-    private static final int SCRATCHING = 6;
+    private static final int PUNCHING = 6;
 
-    // Threads
-    private Thread playerThread;
-    private volatile boolean running = true;
+    //private volatile boolean running = true;
 
     private int points;
-    private Thread tileMapThread;
-
-
-
 
     // Player constructor
     public Player(TileMap tm) {
@@ -83,16 +75,16 @@ public class Player extends MapObject implements Runnable{
         health = maxHealth = 5;
         fire = maxFire = 500;
         fireCost = 200;
-        fireBallDamage = 5;
-        fireBalls = new ArrayList<>();
+        fireballDamage = 5;
+        fireballs = new ArrayList<>();
 
-        // scratching
-        scratchDamage = 8;
-        scratchRange = 40;
+        // punching
+        punchDamage = 8;
+        punchRange = 40;
 
         dead = false;
 
-        points = 0; // Zmieniono dostęp do protected
+        points = 0;
 
         // loading sprites
         try {
@@ -109,7 +101,7 @@ public class Player extends MapObject implements Runnable{
                 BufferedImage[] bi = new BufferedImage[numFrames[i]];
 
                 for(int j = 0; j < numFrames[i]; j++) {
-                    if(i != SCRATCHING) {
+                    if(i != PUNCHING) {
                         bi[j] = spriteSheet.getSubimage(
                                 j * width,
                                 i * height,
@@ -146,27 +138,17 @@ public class Player extends MapObject implements Runnable{
     }
 
 
-    // Metoda run dla jednego wątku gracza
+    // running the thread in GamePanel
     @Override
     public void run() {
-        while (running && !Thread.interrupted()) {
-            update(); // Aktualizacja logiki gracza
+        while (!Thread.interrupted()) {
+            update();
 
             try {
-                Thread.sleep(10); // Dodatkowy delay dla wątku gracza
+                Thread.sleep(10);
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt(); // Przerwanie wątku po przechwyceniu InterruptedException
+                Thread.currentThread().interrupt();
             }
-        }
-    }
-
-    // Metoda zatrzymująca wątek logiki gracza
-    public void stopLogicThread() {
-        running = false;
-        try {
-            playerThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 
@@ -179,8 +161,8 @@ public class Player extends MapObject implements Runnable{
     public void setFiring() {
         firing = true;
     }
-    public void setScratching() {
-        scratching = true;
+    public void setPunching() {
+        punching = true;
     }
     public void setGliding(boolean b) {
         gliding = b;
@@ -190,7 +172,7 @@ public class Player extends MapObject implements Runnable{
     public void hit(int damage) {
         if(flinching || dead) return;
         health -= damage;
-        ouchMusic();
+        ouchSound();
         if (health <= 0) {
             health = 0;
             dead = true;
@@ -203,24 +185,24 @@ public class Player extends MapObject implements Runnable{
     public void checkAttack(ArrayList<Enemy> enemies) {
         // loop through enemies
         for (Enemy e : enemies) {
-            // scratch attack
-            if (scratching) {
+            // punch attack
+            if (punching) {
                 if (facingRight) {
-                    if (e.getx() > x && e.getx() < x + scratchRange && e.gety() > y - height / 2 && e.gety() < y + height / 2) {
-                        e.hit(scratchDamage);
+                    if (e.getx() > x && e.getx() < x + punchRange && e.gety() > y - (float)height / 2 && e.gety() < y + (float)height / 2) {
+                        e.hit(punchDamage);
                     }
                 } else {
-                    if (e.getx() < x && e.getx() > x - scratchRange && e.gety() > y - height / 2 && e.gety() < y + height / 2) {
-                        e.hit(scratchDamage);
+                    if (e.getx() < x && e.getx() > x - punchRange && e.gety() > y - (float)height / 2 && e.gety() < y + (float)height / 2) {
+                        e.hit(punchDamage);
                     }
                 }
             }
 
             // fireballs
-            for (FireBall fireBall : fireBalls) {
-                if (fireBall.intersects(e)) {
-                    e.hit(fireBallDamage);
-                    fireBall.setHit();
+            for (Fireball fireball : fireballs) {
+                if (fireball.intersects(e)) {
+                    e.hit(fireballDamage);
+                    fireball.setHit();
                     break;
                 }
             }
@@ -231,8 +213,6 @@ public class Player extends MapObject implements Runnable{
             }
         }
     }
-
-
 
     private void getNextPosition() {
         // movement of the player
@@ -264,7 +244,7 @@ public class Player extends MapObject implements Runnable{
         }
 
         // the player cannot move while attacking, except in air
-        if ((currentAction == SCRATCHING || currentAction == FIREBALL) &&
+        if ((currentAction == PUNCHING || currentAction == FIREBALL) &&
                 !(jumping || falling)) {
             dx = 0;
         }
@@ -312,8 +292,8 @@ public class Player extends MapObject implements Runnable{
         setPosition(xTemporary, yTemporary);
 
         // checking if the attack has stopped
-        if(currentAction == SCRATCHING) {
-            if(animation.hasPlayedOnce()) scratching = false;
+        if(currentAction == PUNCHING) {
+            if(animation.hasPlayedOnce()) punching = false;
         }
         if(currentAction == FIREBALL) {
             if(animation.hasPlayedOnce()) firing = false;
@@ -325,17 +305,17 @@ public class Player extends MapObject implements Runnable{
         if(firing && currentAction != FIREBALL) {
             if(fire > fireCost) {
                 fire -= fireCost;
-                FireBall fb = new FireBall(tileMap, facingRight);
+                Fireball fb = new Fireball(tileMap, facingRight);
                 fb.setPosition(x, y);
-                fireBalls.add(fb);
+                fireballs.add(fb);
             }
         }
 
         // update fireballs
-        for(int i = 0; i < fireBalls.size(); i++) {
-            fireBalls.get(i).update();
-            if(fireBalls.get(i).shouldRemove()) {
-                fireBalls.remove(i);
+        for(int i = 0; i < fireballs.size(); i++) {
+            fireballs.get(i).update();
+            if(fireballs.get(i).shouldRemove()) {
+                fireballs.remove(i);
                 i--;
             }
         }
@@ -349,18 +329,18 @@ public class Player extends MapObject implements Runnable{
         }
 
         // setting animation for different states of the player
-        if(scratching) {
-            if(currentAction != SCRATCHING) {
-                scratchingMusic();
-                currentAction = SCRATCHING;
-                animation.setFrames(sprites.get(SCRATCHING));
+        if(punching) {
+            if(currentAction != PUNCHING) {
+                punchingSound();
+                currentAction = PUNCHING;
+                animation.setFrames(sprites.get(PUNCHING));
                 animation.setDelay(50);
                 width = 60;
             }
         }
         else if(firing) {
             if(currentAction != FIREBALL) {
-                fireballMusic();
+                fireballSound();
                 currentAction = FIREBALL;
                 animation.setFrames(sprites.get(FIREBALL));
                 animation.setDelay(100);
@@ -415,45 +395,47 @@ public class Player extends MapObject implements Runnable{
         animation.update();
 
         // setting direction
-        if(currentAction != SCRATCHING && currentAction != FIREBALL) {
+        if(currentAction != PUNCHING && currentAction != FIREBALL) {
             if(right) facingRight = true;
             if(left) facingRight = false;
         }
     }
 
+    // checking if the player is dead
     public boolean isDead() {
         if(dead) { health = 5; }
         return dead;
     }
 
+    // checking if the player is alive
     public void isAlive(boolean alive) {
         dead = alive;
         if(!alive) health = 5;
     }
 
+    // getting the height of the player
     public double getHeight() {
         return y;
     }
 
-    // Metoda pobierająca punkty
+    // getting the points of the player
     public int getPoints() {
         return points;
     }
 
-    // Metoda dodająca punkty
+    // adding the points for the player
     public void addPoints(int amount) {
         points += amount;
     }
 
     // drawing the player
     public void draw(Graphics2D g) {
-
         // setting map position
         setMapPosition();
 
         // drawing fireballs
-        for (FireBall fireBall : fireBalls) {
-            fireBall.draw(g);
+        for (Fireball fireball : fireballs) {
+            fireball.draw(g);
         }
 
         // drawing the player

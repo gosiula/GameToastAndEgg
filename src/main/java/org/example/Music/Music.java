@@ -1,5 +1,4 @@
 package org.example.Music;
-
 import java.io.File;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -7,67 +6,66 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineEvent;
 
+// LOADING AND PLAYING MUSIC
 public class Music {
-    private static Clip bgMusicClip; // Separate Clip for background music
-    private static Clip fireballSoundClip;
-    private static Clip congratulationSoundClip;
-    private static Clip gameoverSoundClip;
+    // separate clips for each sound (so they don't interfere)
+    private static Clip bgMusicClip;
     private static Clip menuSoundClip;
-    private static Clip scoreSoundClip;
     private static Clip choosingSoundClip;
-    private static Clip scratchingSoundClip;
-    private static Clip ouchSoundClip;
 
-    private static float bgMusicVolume = -20.0f; // Default background music volume
+    // default background music volume
+    private static final float bgMusicVolume = -20.0f;
+
+    // a boolean to determine if the background music should loop
     private static boolean shouldLoop = true;
 
+    // music and sounds paths
     public static void backgroundMusic() {
         String filepath = "C:\\Users\\Gosia\\Desktop\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\chipichipi.wav";
         PlayBgMusic(filepath);
     }
 
-
-    public static void scratchingMusic() {
+    public static void punchingSound() {
         String filepath = "C:\\Users\\Gosia\\Desktop\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\punching.wav";
-        playScratchingSound(filepath);
+        playPunchingSound(filepath);
     }
 
-
-    public static void fireballMusic() {
+    public static void fireballSound() {
         String filepath = "C:\\Users\\Gosia\\Desktop\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\fireball.wav";
-        playFireBallSound(filepath);
+        playFireballSound(filepath);
     }
 
-    public static void congratulationsMusic() {
+    public static void congratulationsSound() {
         String filepath = "C:\\Users\\Gosia\\Desktop\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\congratulations.wav";
         playCongratulationSound(filepath);
     }
 
-    public static void gameOverMusic() {
+    public static void gameOverSounds() {
         String filepath = "C:\\Users\\Gosia\\Desktop\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\game_over.wav";
         playGameOverSound(filepath);
     }
 
-    public static void menuMusic() {
+    public static void menuSound() {
         String filepath = "C:\\Users\\Gosia\\Desktop\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\menu.wav";
         playMenuSound(filepath);
     }
 
-    public static void scoreMusic() {
+    public static void scoreSound() {
         String filepath = "C:\\Users\\Gosia\\Desktop\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\score.wav";
         playScoreSound(filepath);
     }
 
-    public static void choosingMusic() {
+    public static void choosingSound() {
         String filepath = "C:\\Users\\Gosia\\Desktop\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\choosing.wav";
         playChoosingSound(filepath);
     }
 
-    public static void ouchMusic() {
+    public static void ouchSound() {
         String filepath = "C:\\Users\\Gosia\\Desktop\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\ouch.wav";
-        playChoosingSound(filepath);
+        playOuchSound(filepath);
     }
 
+    // playing music and sounds
     public static void PlayBgMusic(String location) {
         try {
             File musicPath = new File(location);
@@ -77,27 +75,139 @@ public class Music {
                 bgMusicClip = AudioSystem.getClip();
                 bgMusicClip.open(audioInput);
 
-                // Set volume to the default level
-                setVolume(bgMusicClip, bgMusicVolume);
+                // set volume to the default level
+                setVolume(bgMusicClip);
 
-                // Add Listener to handle LineEvent
+                // adding Listener to handle LineEvent
                 bgMusicClip.addLineListener(event -> {
                     if (event.getType() == LineEvent.Type.STOP && shouldLoop) {
-                        // If shouldLoop is true, rewind and restart the music
+                        // if shouldLoop is true, rewind and restart the music (when the user is in level 1 state)
                         bgMusicClip.setMicrosecondPosition(0);
                         bgMusicClip.start();
                     }
                 });
-
                 bgMusicClip.start();
             } else {
-                System.out.println("File not found: " + location);
+                System.out.println("file not found: " + location);
             }
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
+    public static void resetShouldLoop() { shouldLoop = true; }
+
+    public static void playFireballSound(String location) {
+        try {
+            // setting volume to the default level for fireball sound
+            Clip fireballSoundClip = createClip(location);
+            setVolume(fireballSoundClip);
+
+            // starting the fireball sound
+            assert fireballSoundClip != null;
+            fireballSoundClip.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void playCongratulationSound(String location) {
+        try {
+            // setting volume to the default level for congratulations sound
+            Clip congratulationSoundClip = createClip(location);
+            setVolume(congratulationSoundClip);
+
+            // starting the congratulations sound
+            assert congratulationSoundClip != null;
+            congratulationSoundClip.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void playGameOverSound(String location) {
+        try {
+            // setting volume to the default level for game over sound
+            Clip gameoverSoundClip = createClip(location);
+            setVolume(gameoverSoundClip);
+
+            // starting the game over sound
+            assert gameoverSoundClip != null;
+            gameoverSoundClip.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void playMenuSound(String location) {
+        try {
+            // setting volume to the default level for menu sound
+            menuSoundClip = createClip(location);
+            setVolume(menuSoundClip);
+
+            // starting the menu sound
+            menuSoundClip.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void playScoreSound(String location) {
+        try {
+            // setting volume to the default level for score sound
+            Clip scoreSoundClip = createClip(location);
+            setVolume(scoreSoundClip);
+
+            // starting the score sound
+            assert scoreSoundClip != null;
+            scoreSoundClip.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void playChoosingSound(String location) {
+        try {
+            // setting volume to the default level for choosing sound
+            choosingSoundClip = createClip(location);
+            setVolume(choosingSoundClip);
+
+            // starting the choosing sound
+            choosingSoundClip.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static void playPunchingSound(String location) {
+        try {
+            // setting volume to the default level for punching sound
+            Clip punchingSoundClip = createClip(location);
+            setVolume(punchingSoundClip);
+
+            // starting the punching sound
+            assert punchingSoundClip != null;
+            punchingSoundClip.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void playOuchSound(String location) {
+        try {
+            // setting volume to the default level for other sounds
+            Clip ouchSoundClip = createClip(location);
+            setVolume(ouchSoundClip);
+
+            // starting the ouch sound
+            assert ouchSoundClip != null;
+            ouchSoundClip.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // stopping music and sounds
     public static void stopBgMusic() {
         if (bgMusicClip != null) {
             shouldLoop = false;
@@ -105,141 +215,10 @@ public class Music {
         }
     }
 
-    public static void resetShouldLoop() {
-        shouldLoop = true;
-    }
+    public static void stopChoosingSound() { if(choosingSoundClip != null) choosingSoundClip.stop(); }
+    public static void stopMenuSound() { if(menuSoundClip != null) menuSoundClip.stop(); }
 
-    public static void playFireBallSound(String location) {
-        try {
-            // Save current background music volume
-            float currentVolume = bgMusicVolume;
-
-            // Set volume to the default level for other sounds
-            fireballSoundClip = createClip(location);
-            setVolume(fireballSoundClip, currentVolume);
-
-            fireballSoundClip.start();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
-
-    public static void playCongratulationSound(String location) {
-        try {
-            // Save current background music volume
-            float currentVolume = bgMusicVolume;
-
-            // Set volume to the default level for other sounds
-            congratulationSoundClip = createClip(location);
-            setVolume(congratulationSoundClip, currentVolume);
-
-            congratulationSoundClip.start();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
-
-    public static void playGameOverSound(String location) {
-        try {
-            // Save current background music volume
-            float currentVolume = bgMusicVolume;
-
-            // Set volume to the default level for other sounds
-            gameoverSoundClip = createClip(location);
-            setVolume(gameoverSoundClip, currentVolume);
-
-            gameoverSoundClip.start();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
-
-    public static void playMenuSound(String location) {
-        try {
-            // Save current background music volume
-            float currentVolume = bgMusicVolume;
-
-            // Set volume to the default level for other sounds
-            menuSoundClip = createClip(location);
-            setVolume(menuSoundClip, currentVolume);
-
-            menuSoundClip.start();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
-
-    public static void playScoreSound(String location) {
-        try {
-            // Save current background music volume
-            float currentVolume = bgMusicVolume;
-
-            // Set volume to the default level for other sounds
-            scoreSoundClip = createClip(location);
-            setVolume(scoreSoundClip, currentVolume);
-
-            scoreSoundClip.start();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
-
-    public static void playChoosingSound(String location) {
-        try {
-            // Save current background music volume
-            float currentVolume = bgMusicVolume;
-
-            // Set volume to the default level for other sounds
-            choosingSoundClip = createClip(location);
-            setVolume(choosingSoundClip, currentVolume);
-
-            choosingSoundClip.start();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
-    public static void playScratchingSound(String location) {
-        try {
-            // Save current background music volume
-            float currentVolume = bgMusicVolume;
-
-            // Set volume to the default level for other sounds
-            scratchingSoundClip = createClip(location);
-            setVolume(scratchingSoundClip, currentVolume);
-
-            scratchingSoundClip.start();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
-
-    public static void playOuchSound(String location) {
-        try {
-            // Save current background music volume
-            float currentVolume = bgMusicVolume;
-
-            // Set volume to the default level for other sounds
-            scratchingSoundClip = createClip(location);
-            setVolume(scratchingSoundClip, currentVolume);
-
-            scratchingSoundClip.start();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
-
-
-
-    public static void stopChoosingMusic() { if(choosingSoundClip != null) choosingSoundClip.stop(); }
-    //public static void stopBgMusic() { if(bgMusicClip != null) bgMusicClip.stop(); }
-    public static void stopScratchingMusic() { if(scratchingSoundClip != null) scratchingSoundClip.stop(); }
-    public static void stopFireballMusic() { if(fireballSoundClip != null) fireballSoundClip.stop(); }
-    public static void stopCongratulationMusic() { if(congratulationSoundClip != null) congratulationSoundClip.stop(); }
-    public static void stopGameOverMusic() { if(gameoverSoundClip != null) gameoverSoundClip.stop(); }
-    public static void stopMenuMusic() { if(menuSoundClip != null) menuSoundClip.stop(); }
-    public static void stopScoreMusic() { if(scoreSoundClip != null) scoreSoundClip.stop(); }
-
-
+    // creating a clip
     private static Clip createClip(String location) {
         try {
             File soundPath = new File(location);
@@ -250,19 +229,20 @@ public class Music {
                 clip.open(audioInput);
                 return clip;
             } else {
-                System.out.println("File not found: " + location);
+                System.out.println("file not found: " + location);
                 return null;
             }
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
             return null;
         }
     }
 
-    private static void setVolume(Clip clip, float volume) {
+    // setting volume
+    private static void setVolume(Clip clip) {
         if (clip != null) {
             FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-            gainControl.setValue(volume);
+            gainControl.setValue(Music.bgMusicVolume);
         }
     }
 }

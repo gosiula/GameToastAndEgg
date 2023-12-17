@@ -1,5 +1,4 @@
 package org.example.TileMap;
-
 import org.example.Main.GamePanel;
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -9,38 +8,39 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Objects;
 
+// READING, DRAWING AND UPDATING THE TILEMAP
 public class TileMap implements Runnable{
+    // position x and y of the tile
     private double x;
     private double y;
+
+    // bounds of the tile
     private int xMin;
     private int yMin;
     private int xMax;
     private int yMax;
+
+    // smooth transitioning factor
     private double tween;
+
+    // map of the tiles
     private int[][] map;
     private final int tileSize;
     private int numberOfRows;
     private int numberOfColumns;
     private int numTilesAcross;
     private Tile[][] tiles;
+
+    // drawing the tiles
     private int rowOffset;
     private int colOffset;
     private final int numRowsToDraw;
     private final int numColsToDraw;
 
-    // Nowe zmienne do obsługi wielowątkowości
-    private Thread tileMapLogicThread;
-    private Thread tileMapGraphicsThread;
-    private Thread tileMapMainThread;
-    private volatile boolean running = true;
-
+    // running the thread in GamePanel
     @Override
     public void run() {
-        // Logika wątku TileMap
-        while (running) {
-            tileMapLogic();
-            tileMapGraphics();
-            tileMapMain();
+        while (!Thread.interrupted()) {
             try {
                 Thread.sleep(16);
             } catch (InterruptedException e) {
@@ -49,48 +49,28 @@ public class TileMap implements Runnable{
         }
     }
 
+    // TileMap constructor
     public TileMap(int tileSize) {
         this.tileSize = tileSize;
         numRowsToDraw = GamePanel.HEIGHT / tileSize + 2;
         numColsToDraw = GamePanel.WIDTH / tileSize + 2;
         tween = 0.07;
-
-        startThreads();
     }
 
-    private void startThreads() {
-        tileMapLogicThread = new Thread(this::tileMapLogic);
-        tileMapGraphicsThread = new Thread(this::tileMapGraphics);
-        tileMapMainThread = new Thread(this::tileMapMain);
-
-        tileMapLogicThread.start();
-        tileMapGraphicsThread.start();
-        tileMapMainThread.start();
-    }
-
-    // Metoda zatrzymująca wątek TileMap
-    public void stopThreads() {
-        running = false;
-        try {
-            tileMapLogicThread.join();
-            tileMapGraphicsThread.join();
-            tileMapMainThread.join();
-            GamePanel.tileMapThread.interrupt(); // Przerwanie wątku TileMap
-            GamePanel.tileMapThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
+    // loading tiles
     public void loadTiles(String s) {
         try {
+            // tileset info - image, number of tiles
             BufferedImage tileset = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(s)));
             numTilesAcross = tileset.getWidth() / tileSize;
 
+            // 2D array for different tile types
             tiles = new Tile[2][numTilesAcross];
 
+            // sub image of the image
             BufferedImage subImage;
             for (int col = 0; col < numTilesAcross; col++) {
+                // extract sub images for normal and blocked tiles
                 subImage = tileset.getSubimage(col * tileSize, 0, tileSize, tileSize);
                 tiles[0][col] = new Tile(subImage, Tile.NORMAL);
                 subImage = tileset.getSubimage(col * tileSize, tileSize, tileSize, tileSize);
@@ -101,6 +81,7 @@ public class TileMap implements Runnable{
         }
     }
 
+    // loading map from a text file
     public void loadMap(String s) {
         try {
             InputStream in = getClass().getResourceAsStream(s);
@@ -119,6 +100,7 @@ public class TileMap implements Runnable{
             yMin = GamePanel.HEIGHT - height;
             yMax = 0;
 
+            // regular expression for whitespace
             String delimiters = "\\s+";
 
             for (int row = 0; row < numberOfRows; row++) {
@@ -133,18 +115,17 @@ public class TileMap implements Runnable{
         }
     }
 
-    public int getTileSize() {
-        return tileSize;
-    }
-
+    // getting x
     public double getx() {
         return x;
     }
 
+    // getting y
     public double gety() {
         return y;
     }
 
+    // getting the type of the tile
     public int getType(int row, int col) {
         int rc = map[row][col];
         int r = rc / numTilesAcross;
@@ -152,10 +133,12 @@ public class TileMap implements Runnable{
         return tiles[r][c].getTileType();
     }
 
+    // getting the type of specific tile
     public void setTween(double d) {
         tween = d;
     }
 
+    // setting position of the tilemap
     public void setPosition(double x, double y) {
         this.x += (x - this.x) * tween;
         this.y += (y - this.y) * tween;
@@ -166,6 +149,7 @@ public class TileMap implements Runnable{
         rowOffset = (int) -this.y / tileSize;
     }
 
+    // ensuring the tilemap stays within the specified bounds
     private void fixBounds() {
         if (x < xMin) x = xMin;
         if (y < yMin) y = yMin;
@@ -173,11 +157,7 @@ public class TileMap implements Runnable{
         if (y > yMax) y = yMax;
     }
 
-    // Metoda zwracająca wysokość mapy
-    public int getHeight() {
-        return numberOfColumns * tileSize;  // Przyjmujemy, że tileSize to wysokość jednego kafelka
-    }
-
+    // drawing the tilemap
     public void draw(Graphics2D g) {
         for (int row = rowOffset; row < rowOffset + numRowsToDraw; row++) {
             if (row >= numberOfRows) break;
@@ -196,42 +176,6 @@ public class TileMap implements Runnable{
                         (int) y + row * tileSize,
                         null
                 );
-            }
-        }
-    }
-
-    // Dodatkowe metody do obsługi logiki, grafiki i wątka głównego dla TileMap
-    private void tileMapLogic() {
-        while (running) {
-            // Aktualizacja logiki TileMap
-            // (możesz dodać swoją logikę)
-            try {
-                Thread.sleep(16);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void tileMapGraphics() {
-        while (running) {
-            // Aktualizacja grafiki TileMap
-            // (możesz dodać swoją logikę renderowania)
-            try {
-                Thread.sleep(16);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void tileMapMain() {
-        while (running) {
-            // Dodatkowa logika dla wątka głównego TileMap
-            try {
-                Thread.sleep(16);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
         }
     }

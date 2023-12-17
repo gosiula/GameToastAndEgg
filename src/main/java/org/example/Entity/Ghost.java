@@ -1,46 +1,51 @@
 package org.example.Entity;
-
 import org.example.TileMap.TileMap;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
-public class Monster extends Enemy implements Runnable {
+// GHOST - DRAWING, ANIMATION AND UPDATING
+public class Ghost extends Enemy implements Runnable {
+    // image
     private BufferedImage[] sprites;
-    private final boolean running = true;
 
-
+    // running the thread in GamePanel
     @Override
     public void run() {
-        while (running && !Thread.interrupted()) {
-            update(); // Aktualizacja logiki gracza
+        while (!Thread.interrupted()) {
+            update();
 
             try {
-                Thread.sleep(10); // Dodatkowy delay dla wątku gracza
+                Thread.sleep(10);
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt(); // Przerwanie wątku po przechwyceniu InterruptedException
+                Thread.currentThread().interrupt();
             }
         }
     }
 
-    public Monster(TileMap tm) {
+    // Ghost constructor
+    public Ghost(TileMap tm) {
+        // calling the constructor of the parent class
         super(tm);
 
+        // speed of the ghost
         moveSpeed = 0.3;
         maxSpeed = 0.3;
         fallSpeed = 0.2;
         maxFallSpeed = 10.0;
 
+        // size of the ghost
         width = 30;
         height = 30;
         cWidth = 20;
         cHeight = 20;
 
+        // health and damage to the ghost
         health = maxHealth = 2;
         damage = 1;
 
+        // loading the image
         try {
             BufferedImage spriteSheet = ImageIO.read(
                     Objects.requireNonNull(getClass().getResourceAsStream(
@@ -48,6 +53,7 @@ public class Monster extends Enemy implements Runnable {
                     ))
             );
 
+            // initialize ghost sprites
             sprites = new BufferedImage[3];
             for (int i = 0; i < sprites.length; i++) {
                 sprites[i] = spriteSheet.getSubimage(
@@ -61,8 +67,13 @@ public class Monster extends Enemy implements Runnable {
             e.printStackTrace();
         }
 
+        // initialization of Animation object
         animation = new Animation();
+
+        // creating animation frames
         animation.setFrames(sprites);
+
+        // setting the delay
         animation.setDelay(300);
 
         right = true;
@@ -70,51 +81,65 @@ public class Monster extends Enemy implements Runnable {
     }
 
     private void getNextPosition() {
-        if (left) {
+        // movement of the ghost
+        if(left) {
             dx -= moveSpeed;
-            if (dx < -maxSpeed) {
+            if(dx < -maxSpeed) {
                 dx = -maxSpeed;
             }
-        } else if (right) {
+        }
+        else if(right) {
             dx += moveSpeed;
-            if (dx > maxSpeed) {
+            if(dx > maxSpeed) {
                 dx = maxSpeed;
             }
         }
 
-        if (falling) {
+        // falling of the ghost
+        if(falling) {
             dy += fallSpeed;
         }
     }
 
+    // updating the ghost
     public void update() {
+        // updating position
         getNextPosition();
         checkTileMapCollision();
         setPosition(xTemporary, yTemporary);
 
-        if (flinching) {
+        // checking for flinching
+        if(flinching) {
             long elapsed =
                     (System.nanoTime() - flinchTimer) / 1000000;
-            if (elapsed > 400) {
+            if(elapsed > 400) {
                 flinching = false;
             }
         }
 
-        if (right && dx == 0) {
+        // if the ghost hits a wall, go other direction
+        if(right && dx == 0) {
             right = false;
             left = true;
             facingRight = false;
-        } else if (left && dx == 0) {
+        }
+        else if(left && dx == 0) {
             right = true;
             left = false;
             facingRight = true;
         }
+
+        // updating animation
         animation.update();
+
     }
 
+    // drawing the ghost
     public void draw(Graphics2D g) {
+        // setting the position of the ghost
         setMapPosition();
+
+        // drawing the ghost
         super.draw(g);
     }
-
 }

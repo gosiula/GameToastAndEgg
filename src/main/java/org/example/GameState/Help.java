@@ -5,11 +5,10 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-
 import static org.example.Music.Music.*;
 
+// INITIALIZATION AND DRAWING OF HELP STATE (BACKGROUND, TITLE, OPTIONS, SOUNDS)
 public class Help extends GameState {
-
     // adding back buffer
     private BufferedImage backBuffer;
 
@@ -70,13 +69,9 @@ public class Help extends GameState {
         }
     }
 
-    public void initialization() {
+    public void initialization() { }
 
-    }
-
-    public void update() {
-        bg.update();
-    }
+    public void update() { bg.update(); }
 
     public void draw(Graphics2D g) {
         // drawing on the back buffer
@@ -116,24 +111,24 @@ public class Help extends GameState {
         g.setFont(optionsFont);
         int startY = 215;
 
-        // draw the instruction text background
-        g.setColor(new Color(22, 34, 89, 100));  // Transparent navy blue color
-        int rectWidth = 340;  // Adjust the rectangle width as needed
-        int rectHeight = 120;  // Adjust the rectangle height as needed
+        // transparent navy blue rectangle under the text
+        g.setColor(new Color(22, 34, 89, 100));
+        int rectWidth = 340;
+        int rectHeight = 120;
         int rectX = (GamePanel.WIDTH - rectWidth) / 2;
         int rectY = 80;
-        int arcWidth = 10;  // Adjust the arc width as needed
-        int arcHeight = 10;  // Adjust the arc height as needed
+        int arcWidth = 10;
+        int arcHeight = 10;
         g.fillRoundRect(rectX, rectY, rectWidth, rectHeight, arcWidth, arcHeight);
 
         // draw the instruction text
         g.setFont(instructionFont);
         g.setColor(Color.WHITE);
 
-        // Set the maximum width for text wrapping
-        int maxWidth = 320;  // Adjust the maximum width as needed
+        // setting the maximum width for text wrapping
+        int maxWidth = 320;
 
-        // Your help text
+        // instruction text
         String helpText = "Welcome to Toast & Egg! " +
                 "In this adventure you will " +
                 "take on the role of Henio The Bread, " +
@@ -143,15 +138,15 @@ public class Help extends GameState {
                 "For each defeated monster he gets 10 points, " +
                 "for each avocado 4, and for each tomato 2. " +
                 "" +
-                "Henio The Bread uses the following buttons: " +
+                "Henio uses the following buttons: " +
                 "left and right arrow to move, " +
                 "up arrow to jump, " +
                 "up arrow + space to fly, " +
                 "F to throw fireballs, " +
-                "S to scratching. " +
+                "S to punching with sparkles. " +
                 "Good luck!";
 
-        // Split the help text into lines with text wrapping
+        // splitting the help text into lines with text wrapping
         ArrayList<String> lines = new ArrayList<>();
         String[] words = helpText.split("\\s+");
         StringBuilder currentLine = new StringBuilder();
@@ -165,14 +160,15 @@ public class Help extends GameState {
         }
         lines.add(currentLine.toString());
 
-        // Draw each line of the text
-        int yy = 100;  // Adjust the starting y-coordinate as needed
+        // drawing each line of the text
+        int yy = 100;
         for (String line : lines) {
             g.drawString(line, rectX + 10, yy);
-            yy += 15;  // Adjust the vertical spacing between lines as needed
+            yy += 15;
         }
 
         g.setFont(optionsFont);
+
         // options to select
         for (int i = 0; i < options.length; i++) {
             int textWidth = (int) g.getFontMetrics().getStringBounds(options[i], g).getWidth();
@@ -200,8 +196,6 @@ public class Help extends GameState {
         }
     }
 
-
-
     // choosing the option
     private void choose() {
         if (currentChoice == 0) {
@@ -217,18 +211,18 @@ public class Help extends GameState {
     // handling the pressed key in the help state
     public void keyPressed(int k) {
         if (k == KeyEvent.VK_ENTER) {
-            stopChoosingMusic();
+            stopChoosingSound();
             choose();
         }
         if (k == KeyEvent.VK_UP) {
-            choosingMusic();
+            choosingSound();
             currentChoice--;
             if (currentChoice == -1) {
                 currentChoice = options.length - 1;
             }
         }
         if (k == KeyEvent.VK_DOWN) {
-            choosingMusic();
+            choosingSound();
             currentChoice++;
             if (currentChoice == options.length) {
                 currentChoice = 0;
@@ -236,7 +230,5 @@ public class Help extends GameState {
         }
     }
 
-    public void keyReleased(int k) {
-
-    }
+    public void keyReleased(int k) { }
 }

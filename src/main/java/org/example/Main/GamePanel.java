@@ -8,8 +8,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 
-
-// CREATING A PANEL, STARTING THE GAME, IMAGES AND GSM
+// CREATING A PANEL, STARTING THE GAME, IMAGES, GSM AND ALL THREADS
 public class GamePanel extends JPanel implements Runnable, KeyListener {
     // width of the panel
     public static final int WIDTH = 384;
@@ -24,11 +23,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     // thread usage
     private static Player player;
     private static TileMap tileMap;
-    private static Monster monster;
+    private static Ghost monster;
     private static Tomato tomato;
     private static Avocado avocado;
     private static Explosion explosion;
-    private static FireBall fireball;
+    private static Fireball fireball;
     private static HUD hud;
     private static Egg egg;
 
@@ -198,7 +197,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         playerThread.start();
     }
 
-    public static void startMonstersThread(Monster monster) {
+    public static void startMonstersThread(Ghost monster) {
         monsterThread = new Thread(monster);
         monsterThread.start();
     }
@@ -213,7 +212,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         avocadoThread.start();
     }
 
-    public static void startFireBallThread(FireBall fireball) {
+    public static void startFireBallThread(Fireball fireball) {
         fireballThread = new Thread(fireball);
         fireballThread.start();
     }
@@ -331,9 +330,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             }
         }
     }
-
-
-
 
     public void keyTyped(KeyEvent key) {
     }

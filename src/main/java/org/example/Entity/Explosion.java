@@ -1,11 +1,12 @@
 package org.example.Entity;
-import org.example.Main.*;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
-public class Explosion implements Runnable{
+// CREATING THE ANIMATION OF THE EXPLOSION
+public class Explosion implements Runnable {
+    // explosion parameters
     private final int x;
     private final int y;
     private int xMap;
@@ -15,24 +16,23 @@ public class Explosion implements Runnable{
     private final Animation animation;
     private BufferedImage[] sprites;
     private boolean remove;
-    private GamePanel gamePanel;
 
-    private volatile boolean running = true;
-
+    // Explosion constructor
     public Explosion(int x, int y) {
         this.x = x;
         this.y = y;
-        this.gamePanel = gamePanel;
         width = 30;
         height = 30;
 
         try {
+            // loading the explosion image
             BufferedImage spriteSheet = ImageIO.read(
                     Objects.requireNonNull(getClass().getResourceAsStream(
                             "/Enemy/explosion.png"
                     ))
             );
 
+            // creating a table with sub images from the image
             sprites = new BufferedImage[6];
             for (int i = 0; i < sprites.length; i++) {
                 sprites[i] = spriteSheet.getSubimage(
@@ -46,40 +46,48 @@ public class Explosion implements Runnable{
             e.printStackTrace();
         }
 
+        // initialization of Animation object
         animation = new Animation();
+
+        // creating animation frames
         animation.setFrames(sprites);
+
+        // setting the delay
         animation.setDelay(70);
     }
 
+    // running the thread in GamePanel
     @Override
     public void run() {
-        while (running && !Thread.interrupted()) {
-            update(); // Aktualizacja logiki gracza
+        while (!Thread.interrupted()) {
+            update();
 
             try {
-                Thread.sleep(10); // Dodatkowy delay dla wątku gracza
+                Thread.sleep(10);
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt(); // Przerwanie wątku po przechwyceniu InterruptedException
+                Thread.currentThread().interrupt();
             }
         }
     }
 
+    // updating the animation
     public void update() {
         animation.update();
-        if (animation.hasPlayedOnce()) {
+        if(animation.hasPlayedOnce()) {
             remove = true;
         }
     }
 
-    public boolean shouldRemove() {
-        return remove;
-    }
+    // checking if the explosion should be removed
+    public boolean shouldRemove() { return remove; }
 
+    // setting map position of the explosion
     public void setMapPosition(int x, int y) {
         xMap = x;
         yMap = y;
     }
 
+    // drawing the explosion
     public void draw(Graphics2D g) {
         g.drawImage(
                 animation.getImage(),
@@ -88,5 +96,4 @@ public class Explosion implements Runnable{
                 null
         );
     }
-
 }

@@ -4,18 +4,19 @@ import org.example.TileMap.Background;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import static org.example.Music.Music.choosingSound;
+import static org.example.Music.Music.stopChoosingSound;
 
-import static org.example.Music.Music.choosingMusic;
-import static org.example.Music.Music.stopChoosingMusic;
-
+// INITIALIZATION AND DRAWING OF GAME OVER STATE (BACKGROUND, TITLE, OPTIONS, SOUNDS)
 public class GameOver extends GameState {
     // background
     private Background bg;
 
+    // adding back buffer
+    private BufferedImage backBuffer;
+
     // current choice
     private int currentChoice = 0;
-
-    private BufferedImage backBuffer;
 
     // table of options on the menu
     private final String[] options = { "Back To Menu", "Quit" };
@@ -35,6 +36,13 @@ public class GameOver extends GameState {
     private Color pinkColor;
     private Color purpleColor;
     private Color darkBrownColor;
+
+    // text font
+    private Font textFont;
+
+    // text colors
+    private Color textColor;
+    private Color borderColor;
 
     // Help constructor
     public GameOver(GameStateManager gsm) {
@@ -56,6 +64,9 @@ public class GameOver extends GameState {
             this.pinkColor = new Color(231, 120, 231);
             this.purpleColor = new Color(131, 20, 131);
             this.darkBrownColor = new Color(51, 30, 10);
+            textFont = new Font("Century Gothic", Font.PLAIN, 24);
+            textColor = new Color(255, 255, 255);
+            borderColor = new Color(0, 0, 0);
 
             // initialization of the back buffer
             backBuffer = new BufferedImage(GamePanel.WIDTH, GamePanel.HEIGHT, BufferedImage.TYPE_INT_RGB);
@@ -63,9 +74,7 @@ public class GameOver extends GameState {
             e.printStackTrace();
         }
     }
-    public void initialization() {
-
-    }
+    public void initialization() { }
 
     public void update() {
         bg.update();
@@ -85,19 +94,13 @@ public class GameOver extends GameState {
     }
 
     private void drawPlayerPoints(Graphics2D g) {
-        // Ustawienia czcionki i koloru
-        Font font = new Font("Century Gothic", Font.PLAIN, 24);
-        Color textColor = new Color(255, 255, 255);
-
-        // Przygotowanie do rysowania napisu z cieniem
-        g.setFont(font);
-        g.setColor(new Color(0, 0, 0));
+        // draw the points with black outline
+        g.setFont(textFont);
+        g.setColor(borderColor);
         g.drawString("Points: " + Level1.getFinalPoints(), 138, 151);
         g.drawString("Points: " + Level1.getFinalPoints(), 136, 151);
         g.drawString("Points: " + Level1.getFinalPoints(), 136, 149);
         g.drawString("Points: " + Level1.getFinalPoints(), 138, 149);
-
-        // Rysowanie właściwego napisu
         g.setColor(textColor);
         g.drawString("Points: " + Level1.getFinalPoints(), 137, 150);
     }
@@ -106,9 +109,10 @@ public class GameOver extends GameState {
         // draw background
         bg.draw(g);
 
-        g.setColor(new Color(0, 0, 0, 80));  // Transparent navy blue color
-        int rectWidth = 384;  // Adjust the rectangle width as needed
-        int rectHeight = 288;  // Adjust the rectangle height as needed
+        // transparent navy blue rectangle on the background
+        g.setColor(new Color(0, 0, 0, 80));
+        int rectWidth = 384;
+        int rectHeight = 288;
         int rectX = 0;
         int rectY = 0;
         g.fillRect(rectX, rectY, rectWidth, rectHeight);
@@ -130,13 +134,13 @@ public class GameOver extends GameState {
         g.setColor(yellowColor);
         g.drawString("Over", 208, 99);
 
+        // drawing player points
         drawPlayerPoints(g);
 
-        // draw menu options
         g.setFont(optionsFont);
+        // location y of the options to select
         int startY = 195;
 
-        g.setFont(optionsFont);
         // options to select
         for (int i = 0; i < options.length; i++) {
             int textWidth = (int) g.getFontMetrics().getStringBounds(options[i], g).getWidth();
@@ -178,18 +182,18 @@ public class GameOver extends GameState {
     // handling the pressed key in the help state
     public void keyPressed(int k) {
         if (k == KeyEvent.VK_ENTER) {
-            stopChoosingMusic();
+            stopChoosingSound();
             choose();
         }
         if (k == KeyEvent.VK_UP) {
-            choosingMusic();
+            choosingSound();
             currentChoice--;
             if (currentChoice == -1) {
                 currentChoice = options.length - 1;
             }
         }
         if (k == KeyEvent.VK_DOWN) {
-            choosingMusic();
+            choosingSound();
             currentChoice++;
             if (currentChoice == options.length) {
                 currentChoice = 0;
@@ -197,7 +201,5 @@ public class GameOver extends GameState {
         }
     }
 
-    public void keyReleased(int k) {
-
-    }
+    public void keyReleased(int k) { }
 }

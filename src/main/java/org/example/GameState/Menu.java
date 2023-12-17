@@ -1,16 +1,12 @@
 package org.example.GameState;
-
 import java.awt.*;
 import java.awt.event.KeyEvent;
-
-import org.example.Entity.Player;
 import org.example.Main.GamePanel;
 import org.example.TileMap.Background;
 import java.awt.image.BufferedImage;
-
 import static org.example.Music.Music.*;
 
-// INITIALIZATION AND DRAWING OF MENU STATE (BACKGROUND, TITLE, OPTIONS)
+// INITIALIZATION AND DRAWING OF MENU STATE (BACKGROUND, TITLE, OPTIONS, SOUNDS)
 public class Menu extends GameState {
     // adding back buffer
     private BufferedImage backBuffer;
@@ -68,13 +64,9 @@ public class Menu extends GameState {
         }
     }
 
-    public void initialization() {
+    public void initialization() { }
 
-    }
-
-    public void update() {
-        bg.update();
-    }
+    public void update() { bg.update(); }
 
     public void draw(Graphics2D g) {
         // drawing on the back buffer
@@ -164,19 +156,19 @@ public class Menu extends GameState {
     // handling the pressed key in the menu state
     public void keyPressed(int k) {
         if (k == KeyEvent.VK_ENTER) {
-            stopChoosingMusic();
-            stopMenuMusic();
+            stopChoosingSound();
+            stopMenuSound();
             choose();
         }
         if (k == KeyEvent.VK_UP) {
-            choosingMusic();
+            choosingSound();
             currentChoice--;
             if (currentChoice == -1) {
                 currentChoice = options.length - 1;
             }
         }
         if (k == KeyEvent.VK_DOWN) {
-            choosingMusic();
+            choosingSound();
             currentChoice++;
             if (currentChoice == options.length) {
                 currentChoice = 0;
