@@ -183,60 +183,50 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             stopHUDThread();
             stopExplosionThread();
             stopEggThread();
-            System.out.println("Threads stopped");
     }
 
     public static void startTileMapThread(TileMap tileMap) {
-        System.out.println("TileMap thread started");
         tileMapThread = new Thread(tileMap);
         tileMapThread.start();
     }
 
     // Metoda startująca wątek gracza
     public static void startPlayerThread(Player player) {
-        System.out.println("Player thread started");
         playerThread = new Thread(player);
         playerThread.start();
     }
 
     public static void startMonstersThread(Monster monster) {
-        System.out.println("Monster thread started");
         monsterThread = new Thread(monster);
         monsterThread.start();
     }
 
     public static void startTomatoThread(Tomato tomato) {
-        System.out.println("Tomato thread started");
         tomatoThread = new Thread(tomato);
         tomatoThread.start();
     }
 
     public static void startAvocadoThread(Avocado avocado) {
-        System.out.println("Avocado thread started");
         avocadoThread = new Thread(avocado);
         avocadoThread.start();
     }
 
     public static void startFireBallThread(FireBall fireball) {
-        System.out.println("Fireball thread started");
         fireballThread = new Thread(fireball);
         fireballThread.start();
     }
 
     public static void startHUDThread(HUD hud) {
-        System.out.println("HUD thread started");
         HUDThread = new Thread(hud);
         HUDThread.start();
     }
 
     public static void startExplosionThread(Explosion explosion) {
-        System.out.println("Explosion thread started");
         explosionThread = new Thread(explosion);
         explosionThread.start();
     }
 
     public static void startEggThread(Egg egg) {
-        System.out.println("Explosion thread started");
         eggThread = new Thread(egg);
         eggThread.start();
     }

@@ -8,6 +8,8 @@ import static org.example.Music.Music.*;
 
 // HANDLING THE CURRENT STATE OF THE GAME
 public class GameStateManager {
+    private long startTime;
+    private long stopTime;
 
     // ArrayList of the states
     private final GameState[] gameStates;
@@ -40,14 +42,23 @@ public class GameStateManager {
         }
         if(state == LEVEL_1_STATE) {
             backgroundMusic();
+            startTime = System.currentTimeMillis();
             gameStates[state] = new Level1(this);
         }
         if(state == HELP_STATE) gameStates[state] = new Help(this);
         if(state == GAME_OVER_STATE) {
             stopBgMusic();
+            stopTime = System.currentTimeMillis();
+            long elapsedTime = (stopTime - startTime) / 1000;
+            System.out.println("Czas działania klasy: " + elapsedTime + " sekund.");
             gameStates[state] = new GameOver(this);
         }
-        if(state == CONGRATULATIONS_STATE) gameStates[state] = new Congratulations(this);
+        if(state == CONGRATULATIONS_STATE) {
+            stopTime = System.currentTimeMillis();
+            long elapsedTime = (stopTime - startTime) / 1000;
+            System.out.println("Czas działania klasy: " + elapsedTime + " sekund.");
+            gameStates[state] = new Congratulations(this);
+        }
     }
 
     private void unloadState(int state) {
