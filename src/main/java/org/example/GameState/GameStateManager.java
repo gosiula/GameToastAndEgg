@@ -4,14 +4,17 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.Timer;
 
+import static org.example.Music.Music.*;
+
 // HANDLING THE CURRENT STATE OF THE GAME
 public class GameStateManager {
 
     // ArrayList of the states
-    private final ArrayList<GameState> gameStates;
+    private final GameState[] gameStates;
 
     // current state
-    private int currentState;
+    private static int currentState;
+    public static final int NUMSTATES = 5;
 
     // available states
     public static final int MENU_STATE = 0;
@@ -22,43 +25,74 @@ public class GameStateManager {
 
     // GameStateManager constructor
     public GameStateManager() {
-        gameStates = new ArrayList<>();
+        gameStates = new GameState[NUMSTATES];
         currentState = MENU_STATE;
 
         // adding available states to the ArrayList
-        gameStates.add(new Menu(this));
-        gameStates.add(new Level1(this));
-        gameStates.add(new Help(this));
-        gameStates.add(new GameOver(this));
-        gameStates.add(new Congratulations(this));
+        loadState(currentState);
 
+    }
+
+    private void loadState(int state) {
+        if(state == MENU_STATE) {
+            menuMusic();
+            gameStates[state] = new Menu(this);
+        }
+        if(state == LEVEL_1_STATE) {
+            backgroundMusic();
+            gameStates[state] = new Level1(this);
+        }
+        if(state == HELP_STATE) gameStates[state] = new Help(this);
+        if(state == GAME_OVER_STATE) {
+            stopBgMusic();
+            gameStates[state] = new GameOver(this);
+        }
+        if(state == CONGRATULATIONS_STATE) gameStates[state] = new Congratulations(this);
+    }
+
+    private void unloadState(int state) {
+        gameStates[state] = null;
     }
 
     // setting the state based on the choice of the user
     public void setState(int state) {
+        unloadState(currentState);
         currentState = state;
-        gameStates.get(currentState).initialization();
+        loadState(currentState);
+
+        // Reset the shouldLoop flag when changing states
+        resetShouldLoop();
+
+        //gameStates[currentState].initialization();
+    }
+
+    public static int getCurrentState() {
+        return currentState;
     }
 
 
     // updating to the current state of the game
     public void update() {
-        if (currentState >= 0 && currentState < gameStates.size()) {
-            gameStates.get(currentState).update();
-        }
+        try {
+            gameStates[currentState].update();
+        } catch(Exception e) {}
     }
 
     // drawing the current state of the game
-    public void draw(java.awt.Graphics2D g) { gameStates.get(currentState).draw(g); }
+    public void draw(java.awt.Graphics2D g) {
+        try {
+            gameStates[currentState].draw(g);
+        } catch(Exception e) {}
+    }
 
     // handling the pressed key for the current state
     public void keyPressed(int k) {
-        gameStates.get(currentState).keyPressed(k);
+        gameStates[currentState].keyPressed(k);
     }
 
     // handling the released key for the current state
     public void keyReleased(int k) {
-        gameStates.get(currentState).keyReleased(k);
+        gameStates[currentState].keyReleased(k);
     }
 
 }

@@ -7,6 +7,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
+import static org.example.Music.Music.*;
+
 // CREATING A PLAYER AND DEFINING THE WORKING OF MOVEMENT, ATTACKS, ANIMATION
 // AND THE INTERACTION WITH OTHER OBJECTS
 public class Player extends MapObject implements Runnable{
@@ -188,6 +190,7 @@ public class Player extends MapObject implements Runnable{
     public void hit(int damage) {
         if(flinching || dead) return;
         health -= damage;
+        ouchMusic();
         if (health <= 0) {
             health = 0;
             dead = true;
@@ -348,6 +351,7 @@ public class Player extends MapObject implements Runnable{
         // setting animation for different states of the player
         if(scratching) {
             if(currentAction != SCRATCHING) {
+                scratchingMusic();
                 currentAction = SCRATCHING;
                 animation.setFrames(sprites.get(SCRATCHING));
                 animation.setDelay(50);
@@ -356,6 +360,7 @@ public class Player extends MapObject implements Runnable{
         }
         else if(firing) {
             if(currentAction != FIREBALL) {
+                fireballMusic();
                 currentAction = FIREBALL;
                 animation.setFrames(sprites.get(FIREBALL));
                 animation.setDelay(100);

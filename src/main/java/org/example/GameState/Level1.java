@@ -6,9 +6,10 @@ import org.example.TileMap.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Map;
 
 import org.example.Entity.Monster;
+
+import static org.example.Music.Music.*;
 
 // INITIALIZATION, UPDATING AND DRAWING OF LEVEL 1 STATE (BACKGROUND, PLAYER, ENEMIES, EXPLOSIONS, HUD)
 public class Level1 extends GameState {
@@ -91,6 +92,7 @@ public class Level1 extends GameState {
         for (int i = 0; i < tomatoList.size(); i++) {
             Tomato tomato = tomatoList.get(i);
             if (player.intersects(tomato)) {
+                scoreMusic();
                 tomatoList.remove(i);
                 i--;
                 player.addPoints(2); // Adjust the points accordingly
@@ -102,6 +104,7 @@ public class Level1 extends GameState {
         for (int i = 0; i < avocadoList.size(); i++) {
             Avocado avocado = avocadoList.get(i);
             if (player.intersects(avocado)) {
+                scoreMusic();
                 avocadoList.remove(i);
                 i--;
                 player.addPoints(4); // Adjust the points accordingly
@@ -230,28 +233,15 @@ public class Level1 extends GameState {
         checkAvocadoCollisions();
 
 
-
-        if (player.getx() > 3000) {
-            if (isQKeyPressed()) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException ex) {
-                    throw new RuntimeException(ex);
-                }
-                gsm.setState(GameStateManager.CONGRATULATIONS_STATE);
-            }
-        }
-
-
         if (player.isDead()) {
             player.setPosition(100,100);
             enemies = new ArrayList<>();
             avocadoList = new ArrayList<>();
             tomatoList = new ArrayList<>();
             GamePanel.stopThreads();
+            stopBgMusic();
+            gameOverMusic();
             gsm.setState(GameStateManager.GAME_OVER_STATE); // Przejdź do stanu GameOver
-            MapObject.xMap = 0;
-            MapObject.yMap = 0;
             player.isAlive(false);
             GamePanel.startThreads();
         }
@@ -261,9 +251,9 @@ public class Level1 extends GameState {
             avocadoList = new ArrayList<>();
             tomatoList = new ArrayList<>();
             GamePanel.stopThreads();
+            stopBgMusic();
+            congratulationsMusic();
             gsm.setState(GameStateManager.CONGRATULATIONS_STATE);
-            MapObject.xMap = 0;
-            MapObject.yMap = 0;
             GamePanel.startThreads();
         }
     }
@@ -272,53 +262,51 @@ public class Level1 extends GameState {
         return qKeyPressed; // Zakłada, że masz zmienną qKeyPressed przechowującą informację o tym, czy klawisz Q został naciśnięty
     }
 
-
     // drawing level 1
     public void draw(Graphics2D g) {
+        // create a back buffer graphics context
+        Graphics2D backBufferGraphics = (Graphics2D) backBuffer.getGraphics();
 
         // drawing on the back buffer
-        Graphics2D backBufferGraphics = (Graphics2D) backBuffer.getGraphics();
         backBufferGraphics.setColor(Color.BLACK);
         backBufferGraphics.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
-        // changing the buffers
-        g.drawImage(backBuffer, 0, 0, null);
 
-        // drawing the background
-        bg.draw(g);
-        bg2.draw(g);
+        // drawing the background on the back buffer
+        bg.draw(backBufferGraphics);
+        bg2.draw(backBufferGraphics);
 
-        // drawing the tilemap
-        tileMap.draw(g);
+        // drawing the tilemap on the back buffer
+        tileMap.draw(backBufferGraphics);
 
-        // drawing the player
-        player.draw(g);
+        // drawing the player on the back buffer
+        player.draw(backBufferGraphics);
 
-        egg.draw(g);
-
+        egg.draw(backBufferGraphics);
 
         for (Tomato tomato : tomatoList) {
-            tomato.draw(g);
+            tomato.draw(backBufferGraphics);
         }
 
         for (Avocado avocado : avocadoList) {
-            avocado.draw(g);
+            avocado.draw(backBufferGraphics);
         }
 
-        // drawing the enemies
+        // drawing the enemies on the back buffer
         for (Enemy enemy : enemies) {
-            enemy.draw(g);
+            enemy.draw(backBufferGraphics);
         }
 
-        // drawing the explosions
+        // drawing the explosions on the back buffer
         for (Explosion explosion : explosions) {
-            explosion.setMapPosition(
-                    (int) tileMap.getx(), (int) tileMap.gety());
-            explosion.draw(g);
+            explosion.setMapPosition((int) tileMap.getx(), (int) tileMap.gety());
+            explosion.draw(backBufferGraphics);
         }
 
-        // drawing the hud
-        hud.draw(g);
+        // drawing the hud on the back buffer
+        hud.draw(backBufferGraphics);
 
+        // draw the back buffer onto the main graphics context
+        g.drawImage(backBuffer, 0, 0, null);
     }
 
     // handling the keys pressed in level 1 state

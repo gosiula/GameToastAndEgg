@@ -5,6 +5,9 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+
+import static org.example.Music.Music.*;
+
 public class Help extends GameState {
 
     // adding back buffer
@@ -214,15 +217,18 @@ public class Help extends GameState {
     // handling the pressed key in the help state
     public void keyPressed(int k) {
         if (k == KeyEvent.VK_ENTER) {
+            stopChoosingMusic();
             choose();
         }
         if (k == KeyEvent.VK_UP) {
+            choosingMusic();
             currentChoice--;
             if (currentChoice == -1) {
                 currentChoice = options.length - 1;
             }
         }
         if (k == KeyEvent.VK_DOWN) {
+            choosingMusic();
             currentChoice++;
             if (currentChoice == options.length) {
                 currentChoice = 0;

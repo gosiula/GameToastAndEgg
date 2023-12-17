@@ -49,4 +49,5 @@ public class Egg extends MapObject implements Runnable{
         setMapPosition();
         g.drawImage(image, (int) (x + xMap - width / 2), (int) (y + yMap - height / 2), null);
     }
+
 }

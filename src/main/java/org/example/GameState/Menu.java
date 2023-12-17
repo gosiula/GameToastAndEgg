@@ -8,6 +8,8 @@ import org.example.Main.GamePanel;
 import org.example.TileMap.Background;
 import java.awt.image.BufferedImage;
 
+import static org.example.Music.Music.*;
+
 // INITIALIZATION AND DRAWING OF MENU STATE (BACKGROUND, TITLE, OPTIONS)
 public class Menu extends GameState {
     // adding back buffer
@@ -162,15 +164,19 @@ public class Menu extends GameState {
     // handling the pressed key in the menu state
     public void keyPressed(int k) {
         if (k == KeyEvent.VK_ENTER) {
+            stopChoosingMusic();
+            stopMenuMusic();
             choose();
         }
         if (k == KeyEvent.VK_UP) {
+            choosingMusic();
             currentChoice--;
             if (currentChoice == -1) {
                 currentChoice = options.length - 1;
             }
         }
         if (k == KeyEvent.VK_DOWN) {
+            choosingMusic();
             currentChoice++;
             if (currentChoice == options.length) {
                 currentChoice = 0;

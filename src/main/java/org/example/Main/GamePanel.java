@@ -173,17 +173,17 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         startEggThread(egg);
     }
 
-    public static void stopThreads() {
-        tileMapThread.stop();
-        playerThread.stop();
-        monsterThread.stop();
-        tomatoThread.stop();
-        avocadoThread.stop();
-        fireballThread.stop();
-        HUDThread.stop();
-        explosionThread.stop();
-        eggThread.stop();
-        System.out.println("Threads stoped");
+        public static void stopThreads() {
+            stopPlayerThread();
+            stopTileMapThread();
+            stopMonsterThread();
+            stopTomatoThread();
+            stopAvocadoThread();
+            stopFireBallThread();
+            stopHUDThread();
+            stopExplosionThread();
+            stopEggThread();
+            System.out.println("Threads stopped");
     }
 
     public static void startTileMapThread(TileMap tileMap) {
@@ -219,7 +219,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     public static void startFireBallThread(FireBall fireball) {
         System.out.println("Fireball thread started");
-        fireballThread = new Thread(avocado);
+        fireballThread = new Thread(fireball);
         fireballThread.start();
     }
 
@@ -252,6 +252,95 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             }
         }
     }
+
+    public static void stopTileMapThread() {
+        if (tileMapThread != null && tileMapThread.isAlive()) {
+            tileMapThread.interrupt();
+            try {
+                tileMapThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void stopMonsterThread() {
+        if (monsterThread != null && monsterThread.isAlive()) {
+            monsterThread.interrupt();
+            try {
+                monsterThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void stopTomatoThread() {
+        if (tomatoThread != null && tomatoThread.isAlive()) {
+            tomatoThread.interrupt();
+            try {
+                tomatoThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void stopAvocadoThread() {
+        if (avocadoThread != null && avocadoThread.isAlive()) {
+            avocadoThread.interrupt();
+            try {
+                avocadoThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void stopFireBallThread() {
+        if (fireballThread != null && fireballThread.isAlive()) {
+            fireballThread.interrupt();
+            try {
+                fireballThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void stopHUDThread() {
+        if (HUDThread != null && HUDThread.isAlive()) {
+            HUDThread.interrupt();
+            try {
+                HUDThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void stopExplosionThread() {
+        if (explosionThread != null && explosionThread.isAlive()) {
+            explosionThread.interrupt();
+            try {
+                explosionThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void stopEggThread() {
+        if (eggThread != null && eggThread.isAlive()) {
+            eggThread.interrupt();
+            try {
+                eggThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     @Override
     protected void paintComponent(Graphics g) {
