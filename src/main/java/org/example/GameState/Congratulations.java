@@ -100,7 +100,7 @@ public class Congratulations extends GameState {
     private void drawPlayerPointsAndTime(Graphics2D g) {
         // calculating final points
         int points;
-        if(gsm.getElapsedTime() > 0) {
+        if(100 - gsm.getElapsedTime() > 0) {
             points = Level1.getFinalPoints() + 100 - (int) gsm.getElapsedTime();
         } else {
             points = Level1.getFinalPoints();

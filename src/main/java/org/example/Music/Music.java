@@ -21,47 +21,47 @@ public class Music {
 
     // music and sounds paths
     public static void backgroundMusic() {
-        String filepath = "C:\\Users\\Gosia\\Desktop\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\chipichipi.wav";
+        String filepath = "C:\\Users\\Gosia\\Desktop\\jezyki_programowania\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\chipichipi.wav";
         PlayBgMusic(filepath);
     }
 
     public static void punchingSound() {
-        String filepath = "C:\\Users\\Gosia\\Desktop\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\punching.wav";
+        String filepath = "C:\\Users\\Gosia\\Desktop\\jezyki_programowania\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\punching.wav";
         playPunchingSound(filepath);
     }
 
     public static void fireballSound() {
-        String filepath = "C:\\Users\\Gosia\\Desktop\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\fireball.wav";
+        String filepath = "C:\\Users\\Gosia\\Desktop\\jezyki_programowania\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\fireball.wav";
         playFireballSound(filepath);
     }
 
     public static void congratulationsSound() {
-        String filepath = "C:\\Users\\Gosia\\Desktop\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\congratulations.wav";
+        String filepath = "C:\\Users\\Gosia\\Desktop\\jezyki_programowania\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\congratulations.wav";
         playCongratulationSound(filepath);
     }
 
     public static void gameOverSounds() {
-        String filepath = "C:\\Users\\Gosia\\Desktop\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\game_over.wav";
+        String filepath = "C:\\Users\\Gosia\\Desktop\\jezyki_programowania\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\game_over.wav";
         playGameOverSound(filepath);
     }
 
     public static void menuSound() {
-        String filepath = "C:\\Users\\Gosia\\Desktop\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\menu.wav";
+        String filepath = "C:\\Users\\Gosia\\Desktop\\jezyki_programowania\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\menu.wav";
         playMenuSound(filepath);
     }
 
     public static void scoreSound() {
-        String filepath = "C:\\Users\\Gosia\\Desktop\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\score.wav";
+        String filepath = "C:\\Users\\Gosia\\Desktop\\jezyki_programowania\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\score.wav";
         playScoreSound(filepath);
     }
 
     public static void choosingSound() {
-        String filepath = "C:\\Users\\Gosia\\Desktop\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\choosing.wav";
+        String filepath = "C:\\Users\\Gosia\\Desktop\\jezyki_programowania\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\choosing.wav";
         playChoosingSound(filepath);
     }
 
     public static void ouchSound() {
-        String filepath = "C:\\Users\\Gosia\\Desktop\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\ouch.wav";
+        String filepath = "C:\\Users\\Gosia\\Desktop\\jezyki_programowania\\GameToastAndEgg\\src\\main\\resources\\BgMusic\\ouch.wav";
         playOuchSound(filepath);
     }
 
