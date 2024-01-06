@@ -9,7 +9,7 @@ public class GameFrame {
 
         // setting the content of the window to an object of GamePanel class
         frame.setContentPane(new GamePanel());
-//
+
         // setting the default close operation to exit on close
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
