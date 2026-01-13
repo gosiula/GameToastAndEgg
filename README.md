@@ -34,6 +34,8 @@ The player controls a bread character who travels through a map full of dangers,
 | ⬆️ + `SPACE` | 🕊️ Long jump / Fly |
 | ⬅️⬆️➡️⬇️ | Move character |
 
+---
+
 ## ▶️ How to Run the Project
 
 ### 1️⃣ Requirements
