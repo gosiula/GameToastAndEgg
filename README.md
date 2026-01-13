@@ -5,7 +5,11 @@ fighting enemies and trying to reach your ultimate goal — the egg 🥚.
 
 ## 🎥 Gameplay Demo
 
-https://github.com/gosiula/GameToastAndEgg/blob/master/game_demo.mp4
+
+
+https://github.com/user-attachments/assets/e152bc40-2dab-4c3c-bde3-5492792881c6
+
+
 
 ## 🎮 About the Game
 
