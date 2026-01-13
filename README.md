@@ -3,6 +3,10 @@
 A dynamic 2D platform game written in **Java**, where you play as a brave slice of bread 🍞,
 fighting enemies and trying to reach your ultimate goal — the egg 🥚.
 
+## 🎥 Gameplay Demo
+
+https://github.com/gosiula/GameToastAndEgg/blob/master/game_demo.mp4
+
 ## 🎮 About the Game
 
 The player controls a bread character who travels through a map full of dangers, enemies, and bonuses.
