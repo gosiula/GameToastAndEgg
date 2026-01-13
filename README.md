@@ -3,8 +3,6 @@
 A dynamic 2D platform game written in **Java**, where you play as a brave slice of bread 🍞,
 fighting enemies and trying to reach your ultimate goal — the egg 🥚.
 
----
-
 ## 🎮 About the Game
 
 The player controls a bread character who travels through a map full of dangers, enemies, and bonuses.
@@ -18,9 +16,7 @@ The player controls a bread character who travels through a map full of dangers,
 - ⏱️ Level completion time is tracked
 - 🥚 **Goal of the game**: reach the egg at the end of the map
 
----
-
-## 🎯 Controls
+### 🎯 Controls
 
 | Key | Action |
 |-----|--------|
@@ -30,15 +26,11 @@ The player controls a bread character who travels through a map full of dangers,
 | ⬆️ + `SPACE` | 🕊️ Long jump / Fly |
 | ⬅️⬆️➡️⬇️ | Move character |
 
----
-
 ## ▶️ How to Run the Project
 
 ### 1️⃣ Requirements
 - ☕ **Java JDK** (e.g. Java 17)
 - 🧠 **IntelliJ IDEA** (recommended)
-
----
 
 ### 2️⃣ Project Setup
 1. Open the project in **IntelliJ IDEA**
