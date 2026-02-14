@@ -52,3 +52,34 @@ The player controls a bread character who travels through a map full of dangers,
 2. Open the **GameFrame** class
 3. Click **Run**
 4. The game will start in a new window 🎉
+
+---
+
+## 📄 License
+Copyright (c) 2026 gosiula. All rights reserved.
+
+SOFTWARE (SOURCE CODE)
+Permission is granted to use, copy, modify, and distribute the source code of this repository
+for noncommercial purposes only, provided that this notice is included in all copies.
+
+Commercial use of the source code is not permitted without prior written permission from the author.
+For commercial licensing, please contact the author.
+
+ARTWORK / GRAPHICS
+All original graphics/artwork created by the author are © 2026 gosiula. All rights reserved.
+You may not reuse, redistribute, or commercialize these graphics without permission, unless explicitly stated otherwise.
+
+THIRD-PARTY AUDIO (MUSIC / SFX)
+Audio files included in this repository (if any) are third-party assets and are NOT covered by the license above.
+They remain subject to their original licenses and/or terms of use, and you are responsible for complying with them
+(including attribution, if required).
+
+Sources used in this project may include:
+- Pixabay (music and/or sound effects): https://pixabay.com/
+- A short audio fragment referencing: https://www.youtube.com/watch?v=KM8rr3XJpZY
+
+No rights to third-party audio are granted by this license. If you reuse, redistribute, or publish builds of this project,
+make sure you have the necessary permissions for all third-party audio assets.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED.
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY.
